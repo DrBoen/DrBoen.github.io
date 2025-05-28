@@ -71,16 +71,16 @@
         border-radius: 2px;
       }
 
-  #battery-fill {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    height: 0%; /* Initial height should be 0 for vertical fill */
-    width: 100%; /* Fill should take full width of the vertical battery */
-    background: linear-gradient(to top, #4caf50 0%, #8bc34a 100%);
-    border-radius: 2px;
-    transition: height 0.4s ease; /* Transition height for vertical fill */
-  }
+      #battery-fill {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 0%; /* Initial height should be 0 for vertical fill */
+        width: 100%; /* Fill should take full width of the vertical battery */
+        background: linear-gradient(to top, #4caf50 0%, #8bc34a 100%);
+        border-radius: 2px;
+        transition: height 0.4s ease; /* Transition height for vertical fill */
+      }
 
       #charge-label {
         font-weight: 600;
@@ -285,13 +285,13 @@
         posList.appendChild(li);
       });
 
-    /* -------------- Update Function (UI + Accessibility) -------------- */
-    function updateUI(value) {
-      const percent = value * 25; // 0, 25, 50, 75, 100
-      batteryFill.style.height = percent + "%"; // Update height for vertical battery
+      /* -------------- Update Function (UI + Accessibility) -------------- */
+      function updateUI(value) {
+        const percent = value * 25; // 0, 25, 50, 75, 100
+        batteryFill.style.height = percent + "%"; // Update height for vertical battery
 
-      // Charge text label
-      const labels = ["Low", "Moderate", "Good", "High", "Excellent"];
+        // Charge text label
+        const labels = ["Low", "Moderate", "Good", "High", "Excellent"];
         chargeLabel.textContent = `Charge: ${percent}% – ${labels[value]}`;
 
         slider.setAttribute("aria-valuenow", value);
