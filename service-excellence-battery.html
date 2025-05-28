@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>How We Make Others Feel – Emotion Battery</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --battery-width: 220px;
+    --battery-height: 90px;
+  }
+
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.45;
+    color: #111;
+  }
+
+  /* ======= Layout ======= */
+  .layout {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap; /* allows wrapping on narrow screens */
+    gap: 2rem;
+    box-sizing: border-box;
+    justify-content: center;
+  }
+
+  .intro {
+    flex: 1 1 300px; /* grow, shrink, basis */
+    max-width: 480px;
+  }
+
+  .interactive {
+    flex: 1 1 340px;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin-top: 0;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+    margin: 0;
+  }
+
+  /* Battery */
+  #battery-wrapper {
+    position: relative;
+    width: var(--battery-width);
+    height: var(--battery-height);
+    border: 4px solid #333;
+    border-radius: 6px;
+    box-sizing: border-box;
+  }
+
+  #battery-tip {
+    position: absolute;
+    right: -22px;
+    top: 26%;
+    width: 22px;
+    height: 48%;
+    background: #333;
+    border-radius: 2px;
+  }
+
+  #battery-fill {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(to top, #4caf50 0%, #8bc34a 100%);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  #charge-label {
+    font-weight: 600;
+  }
+
+  /* Slider */
+  #slider {
+    width: 320px;
+    accent-color: #4caf50;
+  }
+
+  /* Word lists */
+  .lists {
+    display: flex;
+    gap: 2rem;
+    flex-direction: row; /* side-by-side columns */
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  ul {
+    width: 160px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .negative {
+    color: #d32f2f;
+  }
+
+  .hidden {
+    opacity: 0.2;
+  }
+
+  .visible-positive {
+    color: #2e7d32;
+    font-weight: 600;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .hidden-positive {
+    color: #2e7d32;
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  /* ======= Responsive ======= */
+  @media (max-width: 680px) {
+    .interactive {
+      max-width: 100%;
+    }
+    #slider {
+      width: 90vw;
+      max-width: 360px;
+    }
+    ul {
+      width: 45%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #battery-fill,
+    li {
+      transition: none;
+    }
+  }
+</style>
+</head>
+<body>
+  <main class="layout" aria-label="How We Make Others Feel interactive slide">
+    <!-- Introductory Text -->
+    <section class="intro">
+      <h1 id="slide-title">How We Make Others Feel</h1>
+      <p>
+        Paying attention to how we make others feel is the cornerstone of service excellence. These feelings go beyond being merely satisfied.
+      </p>
+      <p>
+        Although we can’t always do everything others are asking, or solve every problem, we can make others feel good about the care and concern paid to them. We can also reduce negative emotions by trying to remove unnecessary friction or obstacles.
+      </p>
+    </section>
+
+    <!-- Interactive Battery Graphic -->
+    <section class="interactive" aria-labelledby="interactive-heading">
+      <h2 id="interactive-heading">Emotion Battery: Service Excellence</h2>
+
+      <div
+        id="battery-wrapper"
+        aria-label="Battery charge level"
+        role="img"
+        aria-describedby="charge-label"
+      >
+        <div id="battery-fill"></div>
+        <div id="battery-tip"></div>
+      </div>
+      <div id="charge-label" aria-live="polite">Charge: 0% – Low</div>
+
+      <label for="slider" class="visually-hidden">Charge Level Slider (0 = Low, 4 = Excellent)</label>
+      <input
+        type="range"
+        id="slider"
+        min="0"
+        max="4"
+        step="1"
+        value="0"
+        aria-valuemin="0"
+        aria-valuemax="4"
+        aria-valuenow="0"
+        aria-valuetext="Charge level: 0 of 4 – Low"
+      />
+
+      <div class="lists">
+        <ul id="negative-list" aria-label="Negative feelings list"></ul>
+        <ul id="positive-list" aria-label="Positive feelings list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /* ------------------------ Data ------------------------ */
+    const positives = [
+      "Supported",
+      "Valued",
+      "Appreciated",
+      "Recognized",
+      "Important",
+      "Heard",
+      "Understood",
+      "Safe",
+      "Respected",
+      "Accepted",
+      "Delighted",
+      "Empowered",
+    ];
+
+    const negatives = [
+      "Frustrated",
+      "Disregarded",
+      "Unappreciated",
+      "Unimportant",
+      "Taken for granted",
+      "Blocked",
+      "Patronized",
+      "Vulnerable",
+      "Neglected",
+      "Disappointed",
+      "Annoyed",
+      "Helpless",
+    ];
+
+    /* --------------------- DOM References --------------------- */
+    const negList = document.getElementById("negative-list");
+    const posList = document.getElementById("positive-list");
+    const slider = document.getElementById("slider");
+    const batteryFill = document.getElementById("battery-fill");
+    const chargeLabel = document.getElementById("charge-label");
+
+    /* ---------------------- Build Lists ---------------------- */
+    negatives.forEach((word) => {
+      const li = document.createElement("li");
+      li.textContent = word;
+      li.className = "negative";
+      negList.appendChild(li);
+    });
+
+    positives.forEach((word) => {
+      const li = document.createElement("li");
+      li.textContent = word;
+      li.className = "hidden-positive";
+      posList.appendChild(li);
+    });
+
+    /* -------------- Update Function (UI + Accessibility) -------------- */
+    function updateUI(value) {
+      const percent = value * 25; // 0, 25, 50, 75, 100
+      batteryFill.style.width = percent + "%";
+
+      // Charge text label
+      const labels = ["Low", "Moderate", "Good", "High", "Excellent"];
+      chargeLabel.textContent = `Charge: ${percent}% – ${labels[value]}`;
+
+      slider.setAttribute("aria-valuenow", value);
+      slider.setAttribute("aria-valuetext", `Charge level: ${value} of 4 – ${labels[value]}`);
+
+      // Word visibility logic (3 pairs per level)
+      const revealCount = value * 3; // 0 → 12
+
+      Array.from(negList.children).forEach((li, i) => {
+        if (i < revealCount) {
+          li.classList.add("hidden");
+        } else {
+          li.classList.remove("hidden");
+        }
+      });
+
+      Array.from(posList.children).forEach((li, i) => {
+        if (i < revealCount) {
+          li.className = "visible-positive";
+        } else {
+          li.className = "hidden-positive";
+        }
+      });
+    }
+
+    /* ----------------------- Event Bind ----------------------- */
+    slider.addEventListener("input", (e) => updateUI(parseInt(e.target.value, 10)));
+
+    // Initial state
+    updateUI(0);
+  </script>
+
+  <!-- helper class for visually hidden text -->
+  <style>
+    .visually-hidden {
+      position: absolute !important;
+      height: 1px; width: 1px;
+      overflow: hidden;
+      clip: rect(1px, 1px, 1px, 1px);
+      white-space: nowrap;
+    }
+  </style>
+</body>
+</html>
