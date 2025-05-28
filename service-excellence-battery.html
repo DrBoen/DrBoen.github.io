@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
       :root {
-        --battery-width: 90px; /* Swapped width and height */
-        --battery-height: 220px; /* Swapped width and height */
+        --battery-width: 220px;
+        --battery-height: 90px;
       }
 
       body {
@@ -36,9 +36,9 @@
         flex: 1 1 340px;
         max-width: 560px;
         display: flex;
-        flex-direction: row; /* Changed to row */
-        align-items: flex-start; /* Adjusted alignment */
-        gap: 2rem; /* Increased gap for horizontal layout */
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
       }
 
       h1 {
@@ -63,10 +63,10 @@
 
       #battery-tip {
         position: absolute;
-        top: -22px; /* Adjusted position for vertical */
-        left: 26%; /* Adjusted position for vertical */
-        width: 48%; /* Swapped width and height */
-        height: 22px; /* Swapped width and height */
+        right: -22px;
+        top: 26%;
+        width: 22px;
+        height: 48%;
         background: #333;
         border-radius: 2px;
       }
@@ -75,11 +75,11 @@
         position: absolute;
         left: 0;
         bottom: 0;
-        height: 0%; /* Initial height should be 0 for vertical fill */
-        width: 100%; /* Fill should take full width of the vertical battery */
+        height: 100%;
+        width: 0%;
         background: linear-gradient(to top, #4caf50 0%, #8bc34a 100%);
         border-radius: 2px;
-        transition: height 0.4s ease; /* Transition height for vertical fill */
+        transition: width 0.4s ease;
       }
 
       #charge-label {
@@ -100,7 +100,6 @@
         flex-wrap: nowrap;
         justify-content: center;
         align-items: flex-start;
-        flex-grow: 1; /* Allow lists to take available space */
       }
 
       ul {
@@ -139,9 +138,6 @@
       @media (max-width: 680px) {
         .interactive {
           max-width: 100%;
-          flex-direction: column; /* Revert to column on small screens */
-          align-items: center;
-          gap: 1rem;
         }
         #slider {
           width: 90vw;
@@ -149,22 +145,6 @@
         }
         ul {
           width: 45%;
-        }
-        .lists {
-          flex-direction: row; /* Keep lists side-by-side */
-          gap: 2rem;
-          justify-content: center;
-          flex-grow: 0; /* Reset flex-grow on small screens */
-        }
-        #battery-wrapper {
-          width: var(--battery-width); /* Use original dimensions */
-          height: var(--battery-height);
-        }
-        #battery-tip {
-          right: -22px; /* Revert tip position */
-          top: 26%;
-          width: 22px;
-          height: 48%;
         }
       }
 
@@ -288,7 +268,7 @@
       /* -------------- Update Function (UI + Accessibility) -------------- */
       function updateUI(value) {
         const percent = value * 25; // 0, 25, 50, 75, 100
-        batteryFill.style.height = percent + "%"; // Update height for vertical battery
+        batteryFill.style.width = percent + "%";
 
         // Charge text label
         const labels = ["Low", "Moderate", "Good", "High", "Excellent"];
