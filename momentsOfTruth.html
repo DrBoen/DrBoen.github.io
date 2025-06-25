@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moments of Truth in Higher Education</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        background-color: #f0f2f5;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      #main-container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 1000px;
+        width: 100%;
+        position: relative; /* For popup positioning */
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 40px;
+        font-size: 2em;
+      }
+
+      #flowchart-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+        gap: 40px; /* Space between items */
+        margin-bottom: 50px;
+        position: relative;
+      }
+
+      .moment-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        width: 120px; /* Fixed width for each item */
+      }
+
+      .icon-container {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease-in-out;
+      }
+
+      .moment-item:hover .icon-container {
+        transform: translateY(-5px);
+      }
+
+      .icon-container svg {
+        width: 40px;
+        height: 40px;
+        fill: #fff;
+      }
+
+      .moment-item[data-phase="pre-enrollment"] .icon-container {
+        background-color: #66c2e0; /* Light blue */
+      }
+      .moment-item[data-phase="pre-enrollment"] .icon-container svg {
+        fill: #fff;
+      }
+
+      .moment-item[data-phase="academic-journey"] .icon-container {
+        background-color: #ff9933; /* Orange */
+      }
+      .moment-item[data-phase="academic-journey"] .icon-container svg {
+        fill: #fff;
+      }
+
+      .moment-item[data-phase="transition-alumni"] .icon-container {
+        background-color: #4caf50; /* Teal */
+      }
+      .moment-item[data-phase="transition-alumni"] .icon-container svg {
+        fill: #fff;
+      }
+
+      .title {
+        font-weight: bold;
+        color: #555;
+        font-size: 0.9em;
+        line-height: 1.2;
+        margin-bottom: 20px; /* Space for the connecting line */
+      }
+
+      /* Arrows between moments */
+      .moment-item:not(:last-child)::after {
+        content: "→";
+        position: absolute;
+        top: 40px; /* Center vertically with icon */
+        right: -30px; /* Position to the right of the icon */
+        font-size: 2em;
+        color: #ccc;
+        z-index: 1;
+      }
+
+      /* Adjust arrow for wrapping items */
+      @media (max-width: 768px) {
+        .moment-item:not(:last-child)::after {
+          content: ""; /* Hide horizontal arrow */
+        }
+        .moment-item:not(:nth-last-child(-n + 2)):not(:last-child)::after {
+          /* Add vertical arrow for wrapped items, except last row */
+          content: "↓";
+          top: auto;
+          bottom: -30px;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+      }
+
+      #phases-bar-container {
+        display: flex;
+        width: 100%;
+        height: 40px;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-top: 20px;
+      }
+
+      .phase-bar {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        font-weight: bold;
+        font-size: 0.9em;
+        padding: 0 10px;
+        white-space: nowrap;
+      }
+
+      #pre-enrollment-bar {
+        background-color: #87ceeb; /* Lighter blue */
+      }
+
+      #academic-journey-bar {
+        background-color: #ffa500; /* Brighter orange */
+      }
+
+      #transition-alumni-bar {
+        background-color: #4caf50; /* Medium sea green */
+      }
+
+      /* Popup styles */
+      #popup {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        z-index: 100;
+        pointer-events: none; /* Allow clicks to pass through */
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+        min-width: 200px;
+        text-align: left;
+        transform: translate(
+          -50%,
+          -100%
+        ); /* Adjust for positioning above icon */
+        left: 50%; /* Initial horizontal center */
+        top: 0; /* Initial vertical position */
+      }
+
+      #popup.visible {
+        opacity: 1;
+      }
+
+      #popup-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+        font-size: 1.1em;
+      }
+
+      #popup-description {
+        font-size: 0.9em;
+        line-height: 1.4;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 1.5em;
+        }
+        #flowchart-container {
+          flex-direction: column;
+          align-items: center;
+        }
+        .moment-item {
+          width: 80%; /* Make items wider on small screens */
+          margin-bottom: 30px;
+        }
+        .moment-item:not(:last-child)::after {
+          content: "↓"; /* Vertical arrow for all items */
+          top: auto;
+          bottom: -20px;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+        #phases-bar-container {
+          flex-direction: column;
+          height: auto;
+        }
+        .phase-bar {
+          width: 100%;
+          padding: 10px 0;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .phase-bar:last-child {
+          border-bottom: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main-container">
+      <h1>Moments of Truth in Higher Education</h1>
+      <div id="flowchart-container">
+        <div
+          class="moment-item"
+          data-phase="pre-enrollment"
+          data-description="Initial impression of institution"
+        >
+          <div class="icon-container">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2V4.07c3.29 1.27 5.3 4.24 5.91 7.93-.94-2.34-2.5-4.4-4.27-5.91z"
+              />
+            </svg>
+          </div>
+          <div class="title">Website</div>
+        </div>
+        <div
+          class="moment-item"
+          data-phase="pre-enrollment"
+          data-description="Transparency, timeliness, and clarity"
+        >
+          <div class="icon-container">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M112 112c0 35.3-28.7 64-64 64l0 160c35.3 0 64 28.7 64 64l352 0c0-35.3 28.7-64 64-64l0-160c-35.3 0-64-28.7-64-64l-352 0zM0 128C0 92.7 28.7 64 64 64l448 0c35.3 0 64 28.7 64 64l0 256c0 35.3-28.7 64-64 64L64 448c-35.3 0-64-28.7-64-64L0 128zM176 256a112 112 0 1 1 224 0 112 112 0 1 1 -224 0zm80-48c0 8.8 7.2 16 16 16l0 64-8 0c-8.8 0-16 7.2-16 16s7.2 16 16 16l24 0 24 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-8 0 0-80c0-8.8-7.2-16-16-16l-16 0c-8.8 0-16 7.2-16 16z"/></svg>
+          </div>
+          <div class="title">Financial Aid Packaging</div>
+        </div>
+        <div
+          class="moment-item"
+          data-phase="academic-journey"
+          data-description="Academic guidance and personal connection"
+        >
+          <div class="icon-container">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+              ></path>
+            </svg>
+          </div>
+          <div class="title">Advising</div>
+        </div>
+        <div
+          class="moment-item"
+          data-phase="academic-journey"
+          data-description="First class impression and preparedness"
+        >
+          <div class="icon-container">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"
+              ></path>
+            </svg>
+          </div>
+          <div class="title">Class Day One</div>
+        </div>
+        <div
+          class="moment-item"
+          data-phase="academic-journey"
+          data-description="Tutoring, libraries, writing centers"
+        >
+          <div class="icon-container">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
+              ></path>
+            </svg>
+          </div>
+          <div class="title">Faculty Engagement</div>
+        </div>
+        <div
+          class="moment-item"
+          data-phase="transition-alumni"
+          data-description="Celebration and sense of accomplishment"
+        >
+          <div class="icon-container">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"
+              ></path>
+            </svg>
+          </div>
+          <div class="title">Student Activities</div>
+        </div>
+      </div>
+      <div id="phases-bar-container">
+        <div class="phase-bar" id="pre-enrollment-bar">Pre-enrollment</div>
+        <div class="phase-bar" id="academic-journey-bar">Academic Journey</div>
+        <div class="phase-bar" id="transition-alumni-bar">
+          Transition to Alumni
+        </div>
+      </div>
+      <div id="popup" class="hidden">
+        <!-- Popup content will be injected here -->
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const momentItems = document.querySelectorAll(".moment-item");
+        const popup = document.getElementById("popup");
+
+        momentItems.forEach((item) => {
+          item.addEventListener("mouseenter", (event) => {
+            const title = item.querySelector(".title").textContent;
+            const description = item.dataset.description;
+
+            popup.innerHTML = `<div id="popup-title">${title}</div><div id="popup-description">${description}</div>`;
+            popup.classList.add("visible");
+
+            // Position the popup
+            const itemRect = item.getBoundingClientRect();
+            const containerRect = document
+              .getElementById("main-container")
+              .getBoundingClientRect();
+
+            // Calculate position relative to the main-container
+            // Adjust for scroll position if necessary, though for fixed layout it might not be needed
+            const popupX =
+              itemRect.left + itemRect.width / 2 - containerRect.left;
+            const popupY = itemRect.top - containerRect.top;
+
+            popup.style.left = `${popupX}px`;
+            popup.style.top = `${popupY}px`;
+          });
+
+          item.addEventListener("mouseleave", () => {
+            popup.classList.remove("visible");
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
