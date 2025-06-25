@@ -175,7 +175,8 @@
         pointer-events: none; /* Allow clicks to pass through */
         opacity: 0;
         transition: opacity 0.3s ease-in-out;
-        min-width: 200px;
+min-width: 200px;
+        max-width: 300px;
         text-align: left;
         transform: translate(
           -50%,
@@ -357,8 +358,15 @@
               itemRect.left + itemRect.width / 2 - containerRect.left;
             const popupY = itemRect.top - containerRect.top;
 
-            popup.style.left = `${popupX}px`;
+popup.style.left = `${popupX}px`;
             popup.style.top = `${popupY}px`;
+
+            // Check for horizontal overflow
+            if (popupX + popup.offsetWidth > containerRect.width) {
+              popup.style.left = `${containerRect.width - popup.offsetWidth}px`;
+            } else if (popupX - popup.offsetWidth / 2 < 0) {
+              popup.style.left = `${popup.offsetWidth / 2}px`;
+            }
           });
 
           item.addEventListener("mouseleave", () => {
