@@ -277,7 +277,7 @@
         batteryFill.style.width = percent + "%";
 
         // Charge text label
-        const labels = ["Low", "Moderate", "Good", "High", "Excellent"];
+        const labels = ["Distressed", "Tense", "Stable", "Optimistic", "Elated"];
         chargeLabel.textContent = `Charge: ${percent}% – ${labels[value]}`;
 
         slider.setAttribute("aria-valuenow", value);
