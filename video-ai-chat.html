@@ -1,180 +1,264 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-   <!-- Required meta tags -->
-   <meta charset="utf-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
-   <!-- Bootstrap CSS -->
-   <link rel="stylesheet" href="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/thirdpartylib/bootstrap-4.3.1/css/bootstrap.min.css">
-   <!-- Font Awesome CSS -->
-   <link rel="stylesheet" href="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/thirdpartylib/fontawesome-free-5.9.0-web/css/all.min.css">
-   <!-- Template CSS -->
-   <link rel="stylesheet" href="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/css/styles.min.css">
-   <link rel="stylesheet" href="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/css/custom.css">
-   <title>Elements Page</title>
-   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-   <style>
-       body { font-family: 'Roboto', sans-serif; background-color: #fff; }
-       #container {
-           width: 100%;
-           max-width: 100%;
-           margin: -20px auto 0px auto;
-           border: 1px solid #ccc;
-           border-radius: 0px;
-           background-color: #fff;
-           padding: 15px;
-           font-size: 1.2rem
-       }
-       #chatbox {
-           height: 400px;
-           overflow-y: auto;
-           background-color: #fff;
-           padding: 20px;
-           border-bottom: 1px solid #ccc;
-       }
-       #inputArea {
-           padding: 10px 0;
-           display: flex;
-           gap: 10px;
-           flex-wrap: wrap;
-       }
-       input[type="text"] {
-           flex-grow: 1;
-           padding: 10px;
-           border: 2px solid #ccc;
-           border-radius: 5px;
-           font-size: 1.2rem
-       }
-       button {
-           background-color: #0078D7;
-           color: white;
-           border: none;
-           padding: 10px 20px;
-           font-size: 1.2rem;
-           cursor: pointer;
-           border-radius: 5px;
-       }
-       .message {
-    margin-bottom: 15px;
-    padding: 10px;
-    border-radius: 8px;
-    width: 100%; /* Ensure the message fills the container width */
-    box-sizing: border-box; /* Ensure padding is included in the element's width */
-}
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/thirdpartylib/bootstrap-4.3.1/css/bootstrap.min.css"
+    />
+    <!-- Font Awesome CSS -->
+    <link
+      rel="stylesheet"
+      href="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/thirdpartylib/fontawesome-free-5.9.0-web/css/all.min.css"
+    />
+    <!-- Template CSS -->
+    <link
+      rel="stylesheet"
+      href="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/css/styles.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/css/custom.css"
+    />
+    <title>Elements Page</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #fff;
+      }
+      #container {
+        width: 100%;
+        max-width: 100%;
+        margin: -20px auto 0px auto;
+        border: 1px solid #ccc;
+        border-radius: 0px;
+        background-color: #fff;
+        padding: 15px;
+        font-size: 1.2rem;
+      }
+      #chatbox {
+        height: 400px;
+        overflow-y: auto;
+        background-color: #fff;
+        padding: 20px;
+        border-bottom: 1px solid #ccc;
+      }
+      #inputArea {
+        padding: 10px 0;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      input[type="text"] {
+        flex-grow: 1;
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        font-size: 1.2rem;
+      }
+      button {
+        background-color: #0078d7;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      .message {
+        margin-bottom: 15px;
+        padding: 10px;
+        border-radius: 8px;
+        width: 100%; /* Ensure the message fills the container width */
+        box-sizing: border-box; /* Ensure padding is included in the element's width */
+      }
 
-.user {
-    background-color: #e1ffc7;
-}
+      .user {
+        background-color: #e1ffc7;
+      }
 
-.bot {
-    background-color: #f0f0f0;
-    text-align: left; /* Align bot messages to the left */
-    margin-right: auto; /* Push bot messages to the left */
-}
-       #thinkingIndicator {
-           display: block;
-           height: 0;
-           text-align: center;
-           padding: 0;
-           color: #757575;
-           visibility: hidden;
-       }
-       #thinkingIndicator.active {
-           height: auto;
-           padding: 10px;
-           visibility: visible;
-       }
-       #chatbox::-webkit-scrollbar {
-           width: 8px;
-       }
-       #chatbox::-webkit-scrollbar-thumb {
-           background-color: #888;
-           border-radius: 10px;
-       }
-   </style>
-</head><body><div class="container-fluid" ;="">
-<h1 style="text-align: center;">Video AI Chat</h1>
-<p>A 2006 study took a class of surgical residents and split them into two groups. Each received the same study materials, but one group was told to use specific study methods. When tested a month later, this group performed significantly better than the other residents. So, what were these methods? Explore how the brain learns and stores information and how to apply this to your study habits.</p>
-<div class="video-wrapper">
-<div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="https://www.youtube.com/embed/TjPFZaMe2yw?si=oPLu1Ud1_tflz85i" allowfullscreen="allowfullscreen"></iframe><a href="https://youtu.be/sEYVxRPLioE" class="new-window" target="_blank" id="new-window0" data-original-title="opens in new window/tab" data-toggle="tooltip" rel="noopener"><span class="sr-only">(this link opens in a new window/tab)</span></a></div>
-</div>
-<div class="row" ;="">
-<div class="col-12">
-<div id="container">
-<div id="chatbox"></div>
-<!-- Chatbox for conversation history -->
-<div id="inputArea"><input type="text" id="userInput" placeholder="Type your message here...">&nbsp; <button onclick="sendMessage()">Send</button></div>
-</div>
-<div class="card card-graphic">
-<div class="card-body">
-<div class="card-icon">
-<p><img src="https://cdn.lcs.brightspace.com/templates/daylight-v2/assets/img/Info-Icon.svg" alt="info"></p>
-</div>
-<div class="card-text">
-<p><strong>NOTICE</strong></p>
-<p style="text-align: left;">Artificial Intelligence (AI) technologies, including the AI bot you are interacting with in this activity, are experimental. While they're getting better, be aware that they are prone to making mistakes and providing false information from time to time. AI can sometimes misunderstand questions, provide outdated information, or misinterpret data, leading to inaccuracies. It is important to critically evaluate the information provided by AI, cross-check it with reliable sources, and use your own judgment. Always verify the content and consider the context in which AI-generated responses are used. By being cautious and discerning, you can make the most of AI technologies while minimizing the risks associated with their use.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="col-12"><footer>
-<p><img src="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/img/logo.png" alt="logo"></p>
-</footer></div>
-</div>
-</div>
-<p><script>
-   const apiKey = 'sk-proj-gCElNCRNZcF0zKoZTu1ET3BlbkFJNlxWwMRTImFOCiOos5ja';
-   const apiEndpoint = 'https://api.openai.com/v1/chat/completions';
-   const conversationHistory = [];
+      .bot {
+        background-color: #f0f0f0;
+        text-align: left; /* Align bot messages to the left */
+        margin-right: auto; /* Push bot messages to the left */
+      }
+      #thinkingIndicator {
+        display: block;
+        height: 0;
+        text-align: center;
+        padding: 0;
+        color: #757575;
+        visibility: hidden;
+      }
+      #thinkingIndicator.active {
+        height: auto;
+        padding: 10px;
+        visibility: visible;
+      }
+      #chatbox::-webkit-scrollbar {
+        width: 8px;
+      }
+      #chatbox::-webkit-scrollbar-thumb {
+        background-color: #888;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid" ;="">
+      <h1 style="text-align: center">Video AI Chat</h1>
+      <p>
+        A 2006 study took a class of surgical residents and split them into two
+        groups. Each received the same study materials, but one group was told
+        to use specific study methods. When tested a month later, this group
+        performed significantly better than the other residents. So, what were
+        these methods? Explore how the brain learns and stores information and
+        how to apply this to your study habits.
+      </p>
+      <div class="video-wrapper">
+        <div class="embed-responsive embed-responsive-16by9">
+          <iframe
+            class="embed-responsive-item"
+            src="https://www.youtube.com/embed/TjPFZaMe2yw?si=oPLu1Ud1_tflz85i"
+            allowfullscreen="allowfullscreen"
+          ></iframe
+          ><a
+            href="https://youtu.be/sEYVxRPLioE"
+            class="new-window"
+            target="_blank"
+            id="new-window0"
+            data-original-title="opens in new window/tab"
+            data-toggle="tooltip"
+            rel="noopener"
+            ><span class="sr-only"
+              >(this link opens in a new window/tab)</span
+            ></a
+          >
+        </div>
+      </div>
+      <div class="row" ;="">
+        <div class="col-12">
+          <div id="container">
+            <div id="chatbox"></div>
+            <!-- Chatbox for conversation history -->
+            <div id="inputArea">
+              <input
+                type="text"
+                id="userInput"
+                placeholder="Type your message here..."
+              />&nbsp; <button onclick="sendMessage()">Send</button>
+            </div>
+          </div>
+          <div class="card card-graphic">
+            <div class="card-body">
+              <div class="card-icon">
+                <p>
+                  <img
+                    src="https://cdn.lcs.brightspace.com/templates/daylight-v2/assets/img/Info-Icon.svg"
+                    alt="info"
+                  />
+                </p>
+              </div>
+              <div class="card-text">
+                <p><strong>NOTICE</strong></p>
+                <p style="text-align: left">
+                  Artificial Intelligence (AI) technologies, including the AI
+                  bot you are interacting with in this activity, are
+                  experimental. While they're getting better, be aware that they
+                  are prone to making mistakes and providing false information
+                  from time to time. AI can sometimes misunderstand questions,
+                  provide outdated information, or misinterpret data, leading to
+                  inaccuracies. It is important to critically evaluate the
+                  information provided by AI, cross-check it with reliable
+                  sources, and use your own judgment. Always verify the content
+                  and consider the context in which AI-generated responses are
+                  used. By being cautious and discerning, you can make the most
+                  of AI technologies while minimizing the risks associated with
+                  their use.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <footer>
+            <p>
+              <img
+                src="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/img/logo.png"
+                alt="logo"
+              />
+            </p>
+          </footer>
+        </div>
+      </div>
+    </div>
+    <p>
+      <script>
+        const apiKey = "Open AI API Key Here"; // Replace with your OpenAI API key
+        const apiEndpoint = "https://api.openai.com/v1/chat/completions";
+        const conversationHistory = [];
 
-// Function to bold text between **
-function formatBoldText(message) {
-    return message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-}
-
-// Function to update the chatbox with a new message
-function updateChatbox(sender, message, className, messageId = null) {
-    const chatbox = document.getElementById('chatbox');
-    let newMessage;
-    
-    // Format the message to include bold text where ** is found
-    const formattedMessage = formatBoldText(message);
-    
-    if (messageId) {
-        newMessage = document.getElementById(messageId);
-        if (newMessage) {
-            newMessage.innerHTML = `<strong>${{sender}}:</strong> ${{formattedMessage}}`;
+        // Function to bold text between **
+        function formatBoldText(message) {
+          return message.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
         }
-    } else {
-        newMessage = document.createElement('div');
-        newMessage.classList.add('message', className);
-        newMessage.innerHTML = `<strong>${{sender}}:</strong> ${{formattedMessage}}`;
-        chatbox.appendChild(newMessage);
-    }
 
-    // Auto-scroll to the latest message
-    chatbox.scrollTop = chatbox.scrollHeight;
-}
-   // Function to send a message
-   function sendMessage() {
-       let userText = document.getElementById('userInput').value;
-       if (!userText.trim()) return; // Prevent sending empty messages
-       document.getElementById('userInput').value = '';
+        // Function to update the chatbox with a new message
+        function updateChatbox(sender, message, className, messageId = null) {
+          const chatbox = document.getElementById("chatbox");
+          let newMessage;
 
-       updateChatbox('You', userText, 'user');
-       conversationHistory.push({ role: 'user', content: userText });
+          // Format the message to include bold text where ** is found
+          const formattedMessage = formatBoldText(message);
 
-       const messageId = `message-${Date.now()}`;
-       const placeholderMessage = document.createElement('div');
-       placeholderMessage.classList.add('message', 'bot');
-       placeholderMessage.id = messageId;
-       placeholderMessage.innerHTML = `<strong>StudyBot:</strong> The AI is thinking...`;
-       document.getElementById('chatbox').appendChild(placeholderMessage);
-       document.getElementById('chatbox').scrollTop = document.getElementById('chatbox').scrollHeight;
+          if (messageId) {
+            newMessage = document.getElementById(messageId);
+            if (newMessage) {
+              newMessage.innerHTML = `<strong>${{ sender }}:</strong> ${{
+                formattedMessage,
+              }}`;
+            }
+          } else {
+            newMessage = document.createElement("div");
+            newMessage.classList.add("message", className);
+            newMessage.innerHTML = `<strong>${{ sender }}:</strong> ${{
+              formattedMessage,
+            }}`;
+            chatbox.appendChild(newMessage);
+          }
 
-       const systemMessage = {
-           role: 'system',
-           content: `**Provide accurate, concise responses to questions and comments related to the video content for an online course, strictly using the provided script for reference. Stay strictly on-topic, addressing only the subjects covered in the specified video.**
+          // Auto-scroll to the latest message
+          chatbox.scrollTop = chatbox.scrollHeight;
+        }
+        // Function to send a message
+        function sendMessage() {
+          let userText = document.getElementById("userInput").value;
+          if (!userText.trim()) return; // Prevent sending empty messages
+          document.getElementById("userInput").value = "";
+
+          updateChatbox("You", userText, "user");
+          conversationHistory.push({ role: "user", content: userText });
+
+          const messageId = `message-${Date.now()}`;
+          const placeholderMessage = document.createElement("div");
+          placeholderMessage.classList.add("message", "bot");
+          placeholderMessage.id = messageId;
+          placeholderMessage.innerHTML = `<strong>StudyBot:</strong> The AI is thinking...`;
+          document.getElementById("chatbox").appendChild(placeholderMessage);
+          document.getElementById("chatbox").scrollTop =
+            document.getElementById("chatbox").scrollHeight;
+
+          const systemMessage = {
+            role: "system",
+            content: `**Provide accurate, concise responses to questions and comments related to the video content for an online course, strictly using the provided script for reference. Stay strictly on-topic, addressing only the subjects covered in the specified video.**
 
 # Steps
 
@@ -250,49 +334,71 @@ The reason all three of these study techniques—testing, interleaving, and spac
 # Notes
 
 - Avoid discussing general course content or external topics not covered in the provided script.
-- If a question cannot be answered based on the script content alone, gently guide the student back to the discussed topics.`
-       };
+- If a question cannot be answered based on the script content alone, gently guide the student back to the discussed topics.`,
+          };
 
-       axios.post(apiEndpoint, {
-           model: "gpt-4o-mini",
-           messages: [systemMessage, ...conversationHistory],
-           max_tokens: 300 // Set the maximum number of tokens for the response
-       }, {
-           headers: {
-               'Authorization': `Bearer ${{apiKey}}`,
-               'Content-Type': 'application/json'
-           }
-       })
-       .then(response => {
-           const botResponse = response.data.choices[0].message.content;
-           updateChatbox('StudyBot', botResponse, 'bot', messageId);
-           conversationHistory.push({ role: 'assistant', content: botResponse });
-       })
-       .catch(error => {
-           console.error(error);
-           updateChatbox('Bot', 'Failed to get response, please try again later.', 'bot', messageId);
-       });
-   }
+          axios
+            .post(
+              apiEndpoint,
+              {
+                model: "gpt-4o-mini",
+                messages: [systemMessage, ...conversationHistory],
+                max_tokens: 300, // Set the maximum number of tokens for the response
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${{ apiKey }}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            )
+            .then((response) => {
+              const botResponse = response.data.choices[0].message.content;
+              updateChatbox("StudyBot", botResponse, "bot", messageId);
+              conversationHistory.push({
+                role: "assistant",
+                content: botResponse,
+              });
+            })
+            .catch((error) => {
+              console.error(error);
+              updateChatbox(
+                "Bot",
+                "Failed to get response, please try again later.",
+                "bot",
+                messageId
+              );
+            });
+        }
 
-   function handleKeyPress(event) {
-       if (event.key === 'Enter') {
-           sendMessage();
-       }
-   }
+        function handleKeyPress(event) {
+          if (event.key === "Enter") {
+            sendMessage();
+          }
+        }
 
-   document.getElementById('userInput').addEventListener('keypress', handleKeyPress);
+        document
+          .getElementById("userInput")
+          .addEventListener("keypress", handleKeyPress);
 
-   // Initialize chat with a message from the bot
-   window.onload = () => {
-       const initialBotMessage = "Hi there! Do you have any questions or comments about the video? Lets chat.";
-       updateChatbox('StudyBot', initialBotMessage, 'bot');
-       conversationHistory.push({ role: 'assistant', content: initialBotMessage });
-   };
-</script></p>
-<!-- Template JavaScript -->
-<p>
-<script src="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/thirdpartylib/jquery/jquery-3.3.1.slim.min.js"></script>
-<script src="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/thirdpartylib/popper-js/popper.min.js"></script>
-<script src="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/thirdpartylib/bootstrap-4.3.1/js/bootstrap.min.js"></script>
-<script src="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/js/scripts.min.js"></script>
-</p></body></html>
+        // Initialize chat with a message from the bot
+        window.onload = () => {
+          const initialBotMessage =
+            "Hi there! Do you have any questions or comments about the video? Lets chat.";
+          updateChatbox("StudyBot", initialBotMessage, "bot");
+          conversationHistory.push({
+            role: "assistant",
+            content: initialBotMessage,
+          });
+        };
+      </script>
+    </p>
+    <!-- Template JavaScript -->
+    <p>
+      <script src="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/thirdpartylib/jquery/jquery-3.3.1.slim.min.js"></script>
+      <script src="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/thirdpartylib/popper-js/popper.min.js"></script>
+      <script src="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/thirdpartylib/bootstrap-4.3.1/js/bootstrap.min.js"></script>
+      <script src="/content/enforced/148512-Anthony-Boen-Student-Sandbox/module_01/../Brightspace_HTML_Template/_assets/js/scripts.min.js"></script>
+    </p>
+  </body>
+</html>
