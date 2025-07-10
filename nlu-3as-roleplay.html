@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NLU 3 A's Role-Play</title>
+    <style>
+      :root {
+        --accent-color: #0078d7;
+        --user-bg: #e3f2fd;
+        --ai-bg: #f0f0f0;
+      }
+      body {
+        font-family: Inter, Roboto, sans-serif;
+        background: #f4f7fb;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+      }
+      .container {
+        background: #fff;
+        width: 100%;
+        max-width: 600px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      #role-panel,
+      #chat-panel,
+      #feedback-panel {
+        display: none;
+        flex-direction: column;
+        gap: 12px;
+      }
+      #role-panel.active,
+      #chat-panel.active,
+      #feedback-panel.active {
+        display: flex;
+      }
+      #chat-messages {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        height: 300px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .message {
+        padding: 8px 12px;
+        border-radius: 16px;
+        width: fit-content;
+        max-width: 80%;
+      }
+      .user {
+        background: var(--user-bg);
+        align-self: flex-end;
+      }
+      .ai {
+        background: var(--ai-bg);
+        align-self: flex-start;
+      }
+      #chat-form {
+        display: flex;
+        gap: 8px;
+      }
+      input[type="text"] {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        background: var(--accent-color);
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #005bb5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="role-panel" class="active">
+        <h2>3 A's Role-Play</h2>
+        <label for="role-input">What is your role at National Louis University?</label>
+        <input id="role-input" type="text" placeholder="e.g., Academic Advisor" />
+        <button id="start-button">Start</button>
+      </div>
+      <div id="chat-panel">
+        <div id="chat-messages"></div>
+        <form id="chat-form">
+          <input id="user-input" type="text" placeholder="Type your reply..." autocomplete="off" />
+          <button type="submit">Send</button>
+        </form>
+      </div>
+      <div id="feedback-panel"></div>
+    </div>
+
+    <script>
+      const apiKey = "YOUR_OPENAI_API_KEY"; // Replace with your actual API key
+      const rolePanel = document.getElementById('role-panel');
+      const chatPanel = document.getElementById('chat-panel');
+      const feedbackPanel = document.getElementById('feedback-panel');
+      const startButton = document.getElementById('start-button');
+      const roleInput = document.getElementById('role-input');
+      const chatMessages = document.getElementById('chat-messages');
+      const chatForm = document.getElementById('chat-form');
+      const userInput = document.getElementById('user-input');
+
+      let scriptMessages = [];
+      let userResponses = [];
+      let step = 0;
+
+      startButton.addEventListener('click', async () => {
+        const role = roleInput.value.trim();
+        if (!role) return;
+        rolePanel.classList.remove('active');
+        chatPanel.classList.add('active');
+        addMessage('Generating scenario...', 'ai');
+        try {
+          const scenario = await generateScenario(role);
+          scriptMessages = scenario.messages;
+          addMessage(scriptMessages[0], 'ai');
+        } catch (err) {
+          addMessage('Failed to generate scenario. ' + err.message, 'ai');
+        }
+      });
+
+      chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const text = userInput.value.trim();
+        if (!text) return;
+        addMessage(text, 'user');
+        userResponses.push(text);
+        userInput.value = '';
+
+        step++;
+        if (step < scriptMessages.length) {
+          addMessage(scriptMessages[step], 'ai');
+        } else {
+          await finalizeConversation();
+        }
+      });
+
+      function addMessage(text, role) {
+        const div = document.createElement('div');
+        div.className = 'message ' + role;
+        div.textContent = text;
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      async function generateScenario(role) {
+        if (apiKey === 'YOUR_OPENAI_API_KEY') {
+          throw new Error('API key not configured');
+        }
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o',
+            messages: [
+              {
+                role: 'system',
+                content: `You create role-play scenarios for the 3 A's communication technique (Acknowledge, Apologize, Act). Act as a frustrated student or coworker interacting with someone in the given role. Provide a three-message script in JSON like {"messages": ["msg1","msg2","msg3"]}.`,
+              },
+              { role: 'user', content: `Role: ${role}` },
+            ],
+          }),
+        });
+        if (!response.ok) {
+          throw new Error('Scenario API request failed');
+        }
+        const data = await response.json();
+        return JSON.parse(data.choices[0].message.content);
+      }
+
+      async function finalizeConversation() {
+        addMessage('Scoring your responses...', 'ai');
+        try {
+          const result = await scoreResponses(userResponses);
+          showFeedback(result);
+        } catch (err) {
+          addMessage('Failed to score responses. ' + err.message, 'ai');
+        }
+      }
+
+      async function scoreResponses(responses) {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o',
+            messages: [
+              {
+                role: 'system',
+                content: `You evaluate user replies for the 3 A's technique. Score each category from 0-3 and give a short explanation. Respond with JSON: {"scores":{"Acknowledge":0,"Apologize":0,"Act":0},"explanations":{"Acknowledge":"...","Apologize":"...","Act":"..."},"total":0}.`,
+              },
+              {
+                role: 'user',
+                content: responses.map((r, i) => `Response ${i + 1}: ${r}`).join('\n'),
+              },
+            ],
+          }),
+        });
+        if (!response.ok) {
+          throw new Error('Scoring API request failed');
+        }
+        const data = await response.json();
+        return JSON.parse(data.choices[0].message.content);
+      }
+
+      function showFeedback(result) {
+        chatPanel.classList.remove('active');
+        const { scores, explanations, total } = result;
+        feedbackPanel.innerHTML = `
+          <h2>Your Score: ${total}/9</h2>
+          <p><strong>Acknowledge:</strong> ${scores.Acknowledge}/3 - ${explanations.Acknowledge}</p>
+          <p><strong>Apologize:</strong> ${scores.Apologize}/3 - ${explanations.Apologize}</p>
+          <p><strong>Act:</strong> ${scores.Act}/3 - ${explanations.Act}</p>
+          <button id="retry-button">Try Again</button>
+        `;
+        feedbackPanel.classList.add('active');
+        document.getElementById('retry-button').addEventListener('click', () => {
+          location.reload();
+        });
+      }
+    </script>
+  </body>
+</html>
