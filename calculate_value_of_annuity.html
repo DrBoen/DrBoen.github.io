@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Future Value of an Annuity Practice</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f4f4f4;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 20px 30px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      .problem {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .input-group {
+        text-align: center;
+        margin: 20px 0;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      .input-group input {
+        font-size: 1em;
+        padding: 8px;
+        width: 250px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        text-align: center;
+      }
+
+      .buttons {
+        text-align: center;
+        margin: 20px 0;
+      }
+
+      .buttons button {
+        margin: 5px;
+        padding: 10px 15px;
+        font-size: 1em;
+        cursor: pointer;
+        border: none;
+        border-radius: 3px;
+      }
+
+      .buttons #submitBtn {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .buttons #submitBtn:hover {
+        background-color: #218838;
+      }
+
+      .buttons #generateBtn {
+        background-color: #e7f3fe;
+        border: 1px solid #b3d7ff;
+        cursor: pointer;
+      }
+
+      .buttons #generateBtn:hover {
+        background-color: #d6e9fc;
+      }
+
+      .feedback {
+        text-align: center;
+        font-weight: bold;
+        margin: 20px 0;
+        min-height: 24px;
+      }
+
+      .explanation {
+        background: #f9f9f9;
+        border: 1px solid #ccc;
+        margin: 20px;
+        padding: 10px;
+        border-radius: 5px;
+        display: none;
+      }
+
+      .explanation h2 {
+        margin-top: 0;
+      }
+
+      .hint {
+        margin: 20px;
+        width: auto;
+        background: #e7f3fe;
+        border: 1px solid #b3d7ff;
+        padding: 15px;
+        border-radius: 5px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Calculate the Value of an Annuity</h1>
+      <!-- Problem Display -->
+      <div class="problem">
+        <p id="paymentText"></p>
+      </div>
+      <!-- Input Group -->
+      <div class="input-group">
+        <label for="futureValueInput">Calculate the future value (FV):</label>
+        <input
+          type="number"
+          id="futureValueInput"
+          placeholder="Enter your answer..."
+          aria-label="Enter your answer"
+        />
+      </div>
+      <!-- Buttons: Submit, Show Hint, Next Problem -->
+      <div class="buttons">
+        <button id="submitBtn">Submit Answer</button>
+        <button id="hintBtn">Show Hint</button>
+        <button id="generateBtn">Next Problem</button>
+      </div>
+      <!-- Feedback (Correct/Incorrect) -->
+      <div class="feedback" id="feedbackMessage" aria-live="polite"></div>
+      <!-- Hint Box -->
+      <div class="hint" id="hintBox">
+        <p>
+          <strong>Hint:</strong> The future value of an annuity can be
+          calculated using the formula:
+        </p>
+        <p>
+          <strong>FV = PMT × [(1 + r)<sup>n</sup> - 1] / r</strong>
+        </p>
+        <p>Where:</p>
+        <ul>
+          <li>PMT is the periodic payment</li>
+          <li>r is the interest rate per period</li>
+          <li>n is the number of periods</li>
+        </ul>
+        <p>Substitute the values provided in the problem to solve!</p>
+      </div>
+      <!-- Explanation Container (step-by-step calculation) -->
+      <div class="explanation" id="explanation">
+        <h2>Step-by-Step Explanation</h2>
+        <div id="stepExplanation"></div>
+      </div>
+    </div>
+    <p>
+      <script>
+        let payment = 0;
+        let rate = 0;
+        let periods = 0;
+
+        const problemTemplates = [
+          "Imagine you deposit $${{payment}} into an account every year. The account offers an interest rate of ${{rate}}%, compounded annually. What will be the total value of your deposits after ${{periods}} years?",
+          "You plan to save $${{payment}} each month in an investment account with an annual interest rate of ${{rate}}%. If you keep this up for ${{periods}} years, how much will you have saved?",
+          "Each year, you contribute $${{payment}} to a retirement fund that grows at an annual interest rate of ${{rate}}%. How much will your fund be worth after ${{periods}} years?",
+          "A bank account offers an interest rate of ${{rate}}%. If you deposit $${{payment}} every year for ${{periods}} years, what will the future value of your investment be?",
+        ];
+
+        const paymentText = document.getElementById("paymentText");
+        const futureValueInput = document.getElementById("futureValueInput");
+        const feedbackMessage = document.getElementById("feedbackMessage");
+        const generateBtn = document.getElementById("generateBtn");
+        const submitBtn = document.getElementById("submitBtn");
+        const hintBox = document.getElementById("hintBox");
+        const explanationContainer = document.getElementById("explanation");
+        const stepExplanation = document.getElementById("stepExplanation");
+
+        function getRandomInt(min, max) {
+          return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function generateWordProblem(payment, rate, periods) {
+          const template =
+            problemTemplates[
+              Math.floor(Math.random() * problemTemplates.length)
+            ];
+          return template
+            .replace("${{payment}}", payment)
+            .replace("${{rate}}", (rate * 100).toFixed(2))
+            .replace("${{periods}}", periods);
+        }
+
+        function generateProblem() {
+          futureValueInput.value = "";
+          feedbackMessage.textContent = "";
+          feedbackMessage.style.color = "black";
+          explanationContainer.style.display = "none";
+          stepExplanation.innerHTML = "";
+          hintBox.style.display = "none";
+
+          payment = getRandomInt(100, 500);
+          rate = getRandomInt(1, 4) / 100;
+          periods = getRandomInt(5, 20);
+
+          const wordProblem = generateWordProblem(payment, rate, periods);
+          paymentText.textContent = wordProblem;
+        }
+
+        function calculateFutureValue(PMT, r, n) {
+          return PMT * ((Math.pow(1 + r, n) - 1) / r);
+        }
+
+        function checkAnswer() {
+          const studentAnswer = parseFloat(futureValueInput.value);
+          const futureValue = calculateFutureValue(payment, rate, periods);
+
+          if (isNaN(studentAnswer)) {
+            feedbackMessage.textContent = "Please enter a valid number.";
+            feedbackMessage.style.color = "red";
+            return;
+          }
+
+          const isCorrect = Math.abs(studentAnswer - futureValue) < 0.01;
+
+          if (isCorrect) {
+            feedbackMessage.textContent = "Correct! Great job!";
+            feedbackMessage.style.color = "green";
+          } else {
+            feedbackMessage.textContent = `Incorrect. The correct answer is $${futureValue.toFixed(
+              2
+            )}.`;
+            feedbackMessage.style.color = "red";
+          }
+
+          explanationContainer.style.display = "block";
+          stepExplanation.innerHTML = generateStepByStepExplanation(
+            payment,
+            rate,
+            periods,
+            futureValue
+          );
+        }
+
+        function generateStepByStepExplanation(PMT, r, n, FV) {
+          return `
+      <p><strong>Step 1:</strong> Use the formula for the future value of an annuity:</p>
+      <p>FV = PMT × [(1 + r)<sup>n</sup> - 1] / r</p>
+      <p><strong>Step 2:</strong> Substitute the values:</p>
+      <p>FV = ${{ PMT }} × [(1 + ${{ r }})<sup>${{ n }}</sup> - 1] / ${{
+            r,
+          }}</p>
+      <p><strong>Step 3:</strong> Calculate the growth factor:</p>
+      <p>(1 + ${{ r }})<sup>${{ n }}</sup> = ${Math.pow(1 + r, n).toFixed(
+            4
+          )}</p>
+      <p><strong>Step 4:</strong> Complete the calculation:</p>
+      <p>FV = ${FV.toFixed(2)}</p>
+    `;
+        }
+
+        function toggleHint() {
+          if (hintBox.style.display === "none") {
+            hintBox.style.display = "block";
+          } else {
+            hintBox.style.display = "none";
+          }
+        }
+
+        generateBtn.addEventListener("click", generateProblem);
+        submitBtn.addEventListener("click", checkAnswer);
+        document
+          .getElementById("hintBtn")
+          .addEventListener("click", toggleHint);
+
+        // Submit answer on Enter key
+        futureValueInput.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            checkAnswer();
+          }
+        });
+
+        window.onload = generateProblem;
+      </script>
+    </p>
+  </body>
+</html>
