@@ -255,11 +255,9 @@
       <p><strong>Step 1:</strong> Use the formula for the future value of an annuity:</p>
       <p>FV = PMT × [(1 + r)<sup>n</sup> - 1] / r</p>
       <p><strong>Step 2:</strong> Substitute the values:</p>
-      <p>FV = ${{ PMT }} × [(1 + ${{ r }})<sup>${{ n }}</sup> - 1] / ${{
-            r,
-          }}</p>
+      <p>FV = ${PMT} × [(1 + ${r})<sup>${n}</sup> - 1] / ${r}</p>
       <p><strong>Step 3:</strong> Calculate the growth factor:</p>
-      <p>(1 + ${{ r }})<sup>${{ n }}</sup> = ${Math.pow(1 + r, n).toFixed(
+      <p>(1 + ${r})<sup>${n}</sup> = ${Math.pow(1 + r, n).toFixed(
             4
           )}</p>
       <p><strong>Step 4:</strong> Complete the calculation:</p>
