@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Service Excellence Self-Assessment</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        line-height: 1.6;
+        margin: 20px;
+        background-color: #f4f4f4;
+        color: #333;
+      }
+      .container {
+        max-width: 800px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1,
+      h2 {
+        color: #005a9c;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      th,
+      td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .question-category {
+        font-weight: bold;
+        background-color: #e7f3fe;
+      }
+      input[type="radio"] {
+        transform: scale(1.5);
+        margin-right: 5px;
+      }
+      .na-label {
+        color: #777;
+      }
+      button {
+        background-color: #005a9c;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:hover {
+        background-color: #004080;
+      }
+      #results {
+        margin-top: 30px;
+        padding: 20px;
+        background: #e7f3fe;
+        border-radius: 8px;
+      }
+      .chart-container {
+        margin-top: 20px;
+        margin-bottom: 30px; /* Add margin to prevent overlap */
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+      }
+      .chart-box {
+        width: 45%;
+        min-width: 300px;
+        margin-bottom: 20px;
+        height: 350px;
+      }
+      #improvement-suggestions {
+        margin-top: 20px;
+      }
+      .category-totals-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 15px;
+        justify-content: center;
+      }
+      .score-card {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px 20px;
+        flex: 1;
+        min-width: 250px;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        font-size: 1.1em;
+      }
+      .score-card strong {
+        color: #005a9c;
+        font-size: 1.4em;
+        display: block;
+        margin-top: 5px;
+      }
+      .overall-score {
+        background-color: #005a9c;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+      .overall-score strong {
+        color: white;
+      }
+      .response-distribution-chart {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+      }
+      .response-bar-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      .response-label {
+        width: 80px;
+        font-weight: bold;
+        text-align: right;
+        margin-right: 10px;
+      }
+      .response-bar {
+        flex-grow: 1;
+        height: 20px;
+        background-color: #005a9c;
+        border-radius: 3px;
+        text-align: right;
+        color: white;
+        font-size: 0.8em;
+        line-height: 20px;
+        padding-right: 5px;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Service Excellence Level 1 Training</h1>
+      <h2>Best Practices Self Assessment</h2>
+      <p>
+        The goal of the self-assessment is to identify areas of strength and
+        opportunities to enhance your skills. The data is for your own use and
+        will not be shared with anyone, although the overall data may be
+        combined to identify future institution-wide training opportunities.
+      </p>
+      <p>
+        <strong>DIRECTIONS:</strong> For each entry below, estimate how
+        frequently you apply that service best practice in your daily
+        interactions. If the best practice does not apply to your position,
+        choose NA.
+      </p>
+
+      <form id="surveyForm">
+        <table>
+          <thead>
+            <tr>
+              <th>Service Best Practice</th>
+              <th>Always (4)</th>
+              <th>Sometimes (3)</th>
+              <th>Rarely (2)</th>
+              <th>Never (1)</th>
+              <th class="na-label">NA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="question-category">
+              <td colspan="6">Communication</td>
+            </tr>
+            <tr>
+              <td>Communicate openly, clearly and proactively</td>
+              <td><input type="radio" name="q1" value="4" required /></td>
+              <td><input type="radio" name="q1" value="3" /></td>
+              <td><input type="radio" name="q1" value="2" /></td>
+              <td><input type="radio" name="q1" value="1" /></td>
+              <td><input type="radio" name="q1" value="0" /></td>
+            </tr>
+            <tr>
+              <td>Actively listen to others' perspectives</td>
+              <td><input type="radio" name="q2" value="4" required /></td>
+              <td><input type="radio" name="q2" value="3" /></td>
+              <td><input type="radio" name="q2" value="2" /></td>
+              <td><input type="radio" name="q2" value="1" /></td>
+              <td><input type="radio" name="q2" value="0" /></td>
+            </tr>
+            <tr>
+              <td>Give others my full attention</td>
+              <td><input type="radio" name="q3" value="4" required /></td>
+              <td><input type="radio" name="q3" value="3" /></td>
+              <td><input type="radio" name="q3" value="2" /></td>
+              <td><input type="radio" name="q3" value="1" /></td>
+              <td><input type="radio" name="q3" value="0" /></td>
+            </tr>
+            <tr>
+              <td>Strive to value, hear and include everyone</td>
+              <td><input type="radio" name="q4" value="4" required /></td>
+              <td><input type="radio" name="q4" value="3" /></td>
+              <td><input type="radio" name="q4" value="2" /></td>
+              <td><input type="radio" name="q4" value="1" /></td>
+              <td><input type="radio" name="q4" value="0" /></td>
+            </tr>
+            <tr>
+              <td>Be present, kind and respectful</td>
+              <td><input type="radio" name="q5" value="4" required /></td>
+              <td><input type="radio" name="q5" value="3" /></td>
+              <td><input type="radio" name="q5" value="2" /></td>
+              <td><input type="radio" name="q5" value="1" /></td>
+              <td><input type="radio" name="q5" value="0" /></td>
+            </tr>
+            <tr class="question-category">
+              <td colspan="6">Follow Through</td>
+            </tr>
+            <tr>
+              <td>Respond to requests in a timely manner</td>
+              <td><input type="radio" name="q6" value="4" required /></td>
+              <td><input type="radio" name="q6" value="3" /></td>
+              <td><input type="radio" name="q6" value="2" /></td>
+              <td><input type="radio" name="q6" value="1" /></td>
+              <td><input type="radio" name="q6" value="0" /></td>
+            </tr>
+            <tr>
+              <td>Take ownership of problems to solution</td>
+              <td><input type="radio" name="q7" value="4" required /></td>
+              <td><input type="radio" name="q7" value="3" /></td>
+              <td><input type="radio" name="q7" value="2" /></td>
+              <td><input type="radio" name="q7" value="1" /></td>
+              <td><input type="radio" name="q7" value="0" /></td>
+            </tr>
+            <tr>
+              <td>Welcome and act upon questions, suggestions, and concerns</td>
+              <td><input type="radio" name="q8" value="4" required /></td>
+              <td><input type="radio" name="q8" value="3" /></td>
+              <td><input type="radio" name="q8" value="2" /></td>
+              <td><input type="radio" name="q8" value="1" /></td>
+              <td><input type="radio" name="q8" value="0" /></td>
+            </tr>
+            <tr>
+              <td>De-escalate conflict to find equitable resolution</td>
+              <td><input type="radio" name="q9" value="4" required /></td>
+              <td><input type="radio" name="q9" value="3" /></td>
+              <td><input type="radio" name="q9" value="2" /></td>
+              <td><input type="radio" name="q9" value="1" /></td>
+              <td><input type="radio" name="q9" value="0" /></td>
+            </tr>
+            <tr>
+              <td>Communicate that issues are actively being addressed</td>
+              <td><input type="radio" name="q10" value="4" required /></td>
+              <td><input type="radio" name="q10" value="3" /></td>
+              <td><input type="radio" name="q10" value="2" /></td>
+              <td><input type="radio" name="q10" value="1" /></td>
+              <td><input type="radio" name="q10" value="0" /></td>
+            </tr>
+            <tr class="question-category">
+              <td colspan="6">Provide Leadership</td>
+            </tr>
+            <tr>
+              <td>Promote teamwork within and between functions</td>
+              <td><input type="radio" name="q11" value="4" required /></td>
+              <td><input type="radio" name="q11" value="3" /></td>
+              <td><input type="radio" name="q11" value="2" /></td>
+              <td><input type="radio" name="q11" value="1" /></td>
+              <td><input type="radio" name="q11" value="0" /></td>
+            </tr>
+            <tr>
+              <td>Empower others to find and act on creative solutions</td>
+              <td><input type="radio" name="q12" value="4" required /></td>
+              <td><input type="radio" name="q12" value="3" /></td>
+              <td><input type="radio" name="q12" value="2" /></td>
+              <td><input type="radio" name="q12" value="1" /></td>
+              <td><input type="radio" name="q12" value="0" /></td>
+            </tr>
+            <tr>
+              <td>Provide problem-solving resources and tools</td>
+              <td><input type="radio" name="q13" value="4" required /></td>
+              <td><input type="radio" name="q13" value="3" /></td>
+              <td><input type="radio" name="q13" value="2" /></td>
+              <td><input type="radio" name="q13" value="1" /></td>
+              <td><input type="radio" name="q13" value="0" /></td>
+            </tr>
+            <tr>
+              <td>Reflect on my actions to learn and grow</td>
+              <td><input type="radio" name="q14" value="4" required /></td>
+              <td><input type="radio" name="q14" value="3" /></td>
+              <td><input type="radio" name="q14" value="2" /></td>
+              <td><input type="radio" name="q14" value="1" /></td>
+              <td><input type="radio" name="q14" value="0" /></td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="submit">Submit & See My Score</button>
+      </form>
+
+      <div id="results" style="display: none">
+        <h2>Your Results</h2>
+        <h3>Category Totals:</h3>
+        <p id="communicationTotal"></p>
+        <p id="followThroughTotal"></p>
+        <p id="leadershipTotal"></p>
+        <p id="overallTotal"></p>
+
+        <h3>Scoring Guide:</h3>
+        <ul>
+          <li>
+            <strong>4 (Always):</strong> Reflects your service strengths that
+            you most rely on to create a positive experience.
+          </li>
+          <li>
+            <strong>3 (Sometimes):</strong> Reflects service best practices that
+            you could employ more frequently.
+          </li>
+          <li>
+            <strong>1 or 2 (Rarely/Never):</strong> Indicates service best
+            practices that you should give more attention to strengthen your
+            service capabilities.
+          </li>
+        </ul>
+
+        <div id="improvement-suggestions">
+          <h3>Ways to Improve</h3>
+          <p>
+            Based on your results, here are some suggestions for improvement:
+          </p>
+          <ul>
+            <li>
+              <strong>Review 'Sometimes' items:</strong> These are your best
+              opportunities for quick wins. Think about specific situations
+              where you could consciously apply these practices more often.
+            </li>
+            <li>
+              <strong>Focus on 'Rarely/Never' items:</strong> Pick one or two of
+              these practices to focus on for the next month. Seek out
+              resources, ask for feedback from a trusted colleague, or find a
+              mentor who excels in this area.
+            </li>
+            <li>
+              <strong>Practice Active Listening:</strong> In your next
+              conversation, make a conscious effort to paraphrase what the other
+              person said to ensure you understand them before responding.
+            </li>
+            <li>
+              <strong>Seek Feedback:</strong> Ask a supervisor or peer for their
+              perspective on one of the areas you'd like to improve. For
+              example: "I'm working on being more proactive in my communication.
+              Is there a recent situation where I could have done better?"
+            </li>
+            <li>
+              <strong>Set SMART Goals:</strong> For an area of improvement, set
+              a goal that is Specific, Measurable, Achievable, Relevant, and
+              Time-bound. For example: "For the next two weeks, I will respond
+              to all emails within 24 hours."
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("surveyForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          calculateScores();
+        });
+
+      function calculateScores() {
+        const form = document.getElementById("surveyForm");
+        const formData = new FormData(form);
+        const scores = {
+          communication: 0,
+          followThrough: 0,
+          leadership: 0,
+        };
+        const counts = {
+          communication: 0,
+          followThrough: 0,
+          leadership: 0,
+        };
+        const responseDistribution = {
+          always: 0,
+          sometimes: 0,
+          rarely: 0,
+          never: 0,
+          na: 0,
+        };
+
+        // Communication: q1-q5
+        for (let i = 1; i <= 5; i++) {
+          const value = parseInt(formData.get("q" + i) || 0);
+          if (value > 0) {
+            scores.communication += value;
+            counts.communication++;
+          }
+          updateResponseDistribution(value, responseDistribution);
+        }
+
+        // Follow Through: q6-q10
+        for (let i = 6; i <= 10; i++) {
+          const value = parseInt(formData.get("q" + i) || 0);
+          if (value > 0) {
+            scores.followThrough += value;
+            counts.followThrough++;
+          }
+          updateResponseDistribution(value, responseDistribution);
+        }
+
+        // Provide Leadership: q11-q14
+        for (let i = 11; i <= 14; i++) {
+          const value = parseInt(formData.get("q" + i) || 0);
+          if (value > 0) {
+            scores.leadership += value;
+            counts.leadership++;
+          }
+          updateResponseDistribution(value, responseDistribution);
+        }
+
+        const avgScores = {
+          communication:
+            counts.communication > 0
+              ? (scores.communication / counts.communication).toFixed(2)
+              : 0,
+          followThrough:
+            counts.followThrough > 0
+              ? (scores.followThrough / counts.followThrough).toFixed(2)
+              : 0,
+          leadership:
+            counts.leadership > 0
+              ? (scores.leadership / counts.leadership).toFixed(2)
+              : 0,
+        };
+
+        const totalScore =
+          scores.communication + scores.followThrough + scores.leadership;
+        const totalCount =
+          counts.communication + counts.followThrough + counts.leadership;
+        const overallAverage =
+          totalCount > 0 ? (totalScore / totalCount).toFixed(2) : 0;
+
+        document.getElementById(
+          "communicationTotal"
+        ).textContent = `Communication Average Score: ${avgScores.communication}`;
+        document.getElementById(
+          "followThroughTotal"
+        ).textContent = `Follow Through Average Score: ${avgScores.followThrough}`;
+        document.getElementById(
+          "leadershipTotal"
+        ).textContent = `Provide Leadership Average Score: ${avgScores.leadership}`;
+        document.getElementById(
+          "overallTotal"
+        ).textContent = `Overall Average Score: ${overallAverage}`;
+
+        document.getElementById("results").style.display = "block";
+
+        // Scroll to results
+        document
+          .getElementById("results")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+
+      function updateResponseDistribution(value, distribution) {
+        switch (value) {
+          case 4:
+            distribution.always++;
+            break;
+          case 3:
+            distribution.sometimes++;
+            break;
+          case 2:
+            distribution.rarely++;
+            break;
+          case 1:
+            distribution.never++;
+            break;
+          case 0:
+            distribution.na++;
+            break;
+        }
+      }
+    </script>
+  </body>
+</html>
