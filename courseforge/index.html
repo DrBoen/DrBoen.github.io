@@ -1,232 +1,522 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CourseForge — Generate Course Map</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CourseForge — Generate Course Map</title>
 
-  <!-- Fonts: Inter (body) + Merriweather (headings) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@700;900&display=swap" rel="stylesheet">
+    <!-- Fonts: Inter (body) + Merriweather (headings) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@700;900&display=swap"
+      rel="stylesheet"
+    />
 
-  <link rel="stylesheet" href="./styles.css" />
-</head>
-<body>
-  <!-- Header (brand only, no nav) -->
-  <header class="site-header">
-    <div class="container">
-      <div class="brand" role="banner" aria-label="CourseForge">
-        <div class="brand-mark" aria-hidden="true">CF</div>
-        <div class="brand-text">CourseForge</div>
-      </div>
-      <div class="header-actions">
-        <button id="resetBtn" class="btn btn-danger" type="button" aria-haspopup="dialog" aria-controls="confirmResetModal">Reset</button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Hero (solid gradient background, big headline with yellow highlight) -->
-  <section class="hero" aria-label="Intro">
-    <div class="container hero-content">
-      <h1 class="hero-title">
-        Draft <span class="highlight">Your Best</span> Course with CourseForge
-      </h1>
-      <p class="hero-sub">
-        Turn structured inputs into a complete, downloadable course map.
-      </p>
-    </div>
-  </section>
-
-  <!-- Feature/Explainer section header -->
-  <section class="section surface" aria-labelledby="explore-heading">
-    <div class="container">
-      <h2 id="explore-heading" class="section-heading">
-        Ready to get started? 
-      </h2>
-      <p class="section-lead">
-        Provide a few essentials and generate a draft course map. The more details you provide the better the outpt will match your vision! Or leave fileds empty to have the AI peopose ideas for you. 
-      </p>
-    </div>
-  </section>
-
-  <!-- Form section — Step 5 complete: Title, Description, CLOs required; all other fields optional -->
-  <main class="section" aria-labelledby="form-heading">
-    <div class="container">
-      <h3 id="form-heading" class="visually-hidden">Course Information</h3>
-
-      <form id="course-form" novalidate>
-        <div class="form-row">
-          <label class="label" for="title">📘 Course Title <span class="req" aria-hidden="true">*</span></label>
-          <input id="title" name="title" type="text" class="input" placeholder="e.g., Introduction to Data Science" required aria-required="true" />
-          <div class="field-hint">Enter the official course title.</div>
-          <div class="field-error" id="title-error" role="alert" aria-live="polite"></div>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <!-- Header (brand only, no nav) -->
+    <header class="site-header">
+      <div class="container">
+        <div class="brand" role="banner" aria-label="CourseForge">
+          <div class="brand-mark" aria-hidden="true">CF</div>
+          <div class="brand-text">CourseForge</div>
         </div>
-
-        <!-- Description (visible) -->
-        <div class="form-row">
-          <label class="label" for="description">📝 Course Description <span class="req" aria-hidden="true">*</span></label>
-          <textarea id="description" name="description" class="input" rows="4" placeholder="Brief overview of the course" required aria-required="true"></textarea>
-          <div class="field-hint">Summarize the course scope and purpose.</div>
-          <div class="field-error" id="description-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- CLOs (visible) -->
-        <div class="form-row">
-          <label class="label" for="clos">🎯 Course-Level Outcomes (CLOs) <span class="req" aria-hidden="true">*</span></label>
-          <textarea id="clos" name="clos" class="input" rows="4" placeholder="List CLOs, one per line" required aria-required="true"></textarea>
-          <div class="field-hint">Enter one outcome per line or bullet.</div>
-          <div class="field-error" id="clos-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- Course Length (required) -->
-        <div class="form-row">
-          <label class="label" for="length">📏 Course Length <span class="req" aria-hidden="true">*</span></label>
-          <input id="length" name="length" type="text" class="input" placeholder="e.g., 15 weeks" required aria-required="true" />
-          <div class="field-hint">Required. Helps guide pacing.</div>
-          <div class="field-error" id="length-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- Target Module Count (required, positive integer) -->
-        <div class="form-row">
-          <label class="label" for="targetModuleCount">#️⃣ Target Module Count <span class="req" aria-hidden="true">*</span></label>
-          <input id="targetModuleCount" name="targetModuleCount" type="number" class="input" inputmode="numeric" min="1" step="1" placeholder="e.g., 6" required aria-required="true" />
-          <div class="field-hint">Required. Positive whole number to guide output scale.</div>
-          <div class="field-error" id="targetModuleCount-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- PLOs (optional) -->
-        <div class="form-row">
-          <label class="label" for="plos">🎓 Program-Level Outcomes (PLOs)</label>
-          <textarea id="plos" name="plos" class="input" rows="4" placeholder="List PLOs, one per line or bullet"></textarea>
-          <div class="field-hint">Enter one PLO per line or bullet (optional).</div>
-          <div class="field-error" id="plos-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- Credit Hours (optional, positive integer) -->
-        <div class="form-row">
-          <label class="label" for="creditHours">⏱️ Credit Hours</label>
-          <input id="creditHours" name="creditHours" type="number" class="input" inputmode="numeric" min="1" step="1" placeholder="e.g., 3" />
-          <div class="field-hint">Positive whole number (e.g., 3).</div>
-          <div class="field-error" id="creditHours-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- Key Topics (optional) -->
-        <div class="form-row">
-          <label class="label" for="keyTopics">📚 Key Topics</label>
-          <textarea id="keyTopics" name="keyTopics" class="input" rows="3" placeholder="List key topics, one per line or bullet"></textarea>
-          <div class="field-hint">Optional. Helps guide module organization.</div>
-          <div class="field-error" id="keyTopics-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- Key Takeaways (optional) -->
-        <div class="form-row">
-          <label class="label" for="keyTakeaways">💡 Key Takeaways</label>
-          <textarea id="keyTakeaways" name="keyTakeaways" class="input" rows="3" placeholder="List key takeaways, one per line or bullet"></textarea>
-          <div class="field-hint">Optional. Learning highlights or big ideas.</div>
-          <div class="field-error" id="keyTakeaways-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- Prerequisite Knowledge (optional) -->
-        <div class="form-row">
-          <label class="label" for="prerequisites">🔑 Prerequisite Knowledge</label>
-          <textarea id="prerequisites" name="prerequisites" class="input" rows="3" placeholder="e.g., Intro to Programming; Basic Statistics"></textarea>
-          <div class="field-hint">Optional. Prior knowledge expected.</div>
-          <div class="field-error" id="prerequisites-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- Course Format (optional, free text) -->
-        <div class="form-row">
-          <label class="label" for="format">🧭 Course Format</label>
-          <input id="format" name="format" type="text" class="input" placeholder="e.g., Online asynchronous, Hybrid, In-person" />
-          <div class="field-hint">Optional. Free text.</div>
-          <div class="field-error" id="format-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- Required Textbook Info (optional) -->
-        <div class="form-row">
-          <label class="label" for="textbook">📖 Required Textbook Info</label>
-          <textarea id="textbook" name="textbook" class="input" rows="3" placeholder="Title, author, edition, ISBN (if applicable)"></textarea>
-          <div class="field-hint">Optional. Provide details if applicable.</div>
-          <div class="field-error" id="textbook-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- Class Time Strategy (optional) -->
-        <div class="form-row">
-          <label class="label" for="classTimeStrategy">🏫 Class Time Strategy</label>
-          <textarea id="classTimeStrategy" name="classTimeStrategy" class="input" rows="3" placeholder="How will in-class time be used?"></textarea>
-          <div class="field-hint">Optional.</div>
-          <div class="field-error" id="classTimeStrategy-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- Homework Strategy (optional) -->
-        <div class="form-row">
-          <label class="label" for="homeworkStrategy">🏠 Homework Strategy</label>
-          <textarea id="homeworkStrategy" name="homeworkStrategy" class="input" rows="3" placeholder="What will students do outside of class?"></textarea>
-          <div class="field-hint">Optional.</div>
-          <div class="field-error" id="homeworkStrategy-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- Major Assessments (optional) -->
-        <div class="form-row">
-          <label class="label" for="majorAssessments">📊 Major Assessments</label>
-          <textarea id="majorAssessments" name="majorAssessments" class="input" rows="3" placeholder="List major assessments, one per line or bullet"></textarea>
-          <div class="field-hint">Optional.</div>
-          <div class="field-error" id="majorAssessments-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- Learner Characteristics (optional) -->
-        <div class="form-row">
-          <label class="label" for="learnerCharacteristics">👥 Learner Characteristics</label>
-          <textarea id="learnerCharacteristics" name="learnerCharacteristics" class="input" rows="3" placeholder="Typical background, needs, constraints"></textarea>
-          <div class="field-hint">Optional.</div>
-          <div class="field-error" id="learnerCharacteristics-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- Other Information (optional) -->
-        <div class="form-row">
-          <label class="label" for="otherInfo">ℹ️ Other Information</label>
-          <textarea id="otherInfo" name="otherInfo" class="input" rows="3" placeholder="Anything else to inform course design"></textarea>
-          <div class="field-hint">Optional.</div>
-          <div class="field-error" id="otherInfo-error" role="alert" aria-live="polite"></div>
-        </div>
-
-
-        <div class="actions">
-          <button id="submit-btn" class="btn btn-primary" type="submit">
-            Generate Course Map
+        <div class="header-actions">
+          <button
+            id="resetBtn"
+            class="btn btn-danger"
+            type="button"
+            aria-haspopup="dialog"
+            aria-controls="confirmResetModal"
+          >
+            Reset
           </button>
-          <button id="downloadBtn" class="btn" type="button" style="display:none;">Download Markdown</button>
-          <button id="docxBtn" class="btn" type="button" style="display:none;">Download DOCX</button>
         </div>
+      </div>
+    </header>
 
-        <div id="status" class="status" aria-live="polite" role="status" tabindex="-1"></div>
-      </form>
-    </div>
-  </main>
+    <!-- Hero (solid gradient background, big headline with yellow highlight) -->
+    <section class="hero" aria-label="Intro">
+      <div class="container hero-content">
+        <h1 class="hero-title">
+          Draft <span class="highlight">Your Best Course</span> with CourseForge
+        </h1>
+        <p class="hero-sub">
+          Turn structured inputs into a complete, downloadable course map.
+        </p>
+      </div>
+    </section>
 
-  <footer class="site-footer">
-    <div class="container">
-      <small>© <span id="year"></span> CourseForge</small>
-    </div>
-  </footer>
+    <!-- Feature/Explainer section header -->
+    <section class="section surface" aria-labelledby="explore-heading">
+      <div class="container">
+        <h2 id="explore-heading" class="section-heading">
+          Ready to get started?
+        </h2>
+        <p class="section-lead">
+          Provide a few essentials and generate a draft course map. The more
+          details you provide the better the output will match your vision! Or
+          leave fields empty to see what CourseForge reccommends.
+        </p>
+      </div>
+    </section>
 
-  <!-- Reset Confirmation Modal -->
-  <div id="confirmResetModal" class="modal-backdrop hidden" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmResetTitle" aria-describedby="confirmResetDesc">
-      <h2 id="confirmResetTitle">Reset form?</h2>
-      <p id="confirmResetDesc">This will clear all fields and autosaved data.</p>
-      <div class="modal-actions">
-        <button id="cancelReset" class="btn" type="button">Cancel</button>
-        <button id="confirmReset" class="btn btn-danger" type="button">Reset</button>
+    <!-- Form section — Step 5 complete: Title, Description, CLOs required; all other fields optional -->
+    <main class="section" aria-labelledby="form-heading">
+      <div class="container">
+        <h3 id="form-heading" class="visually-hidden">Course Information</h3>
+
+        <form id="course-form" novalidate>
+          <div class="form-row">
+            <label class="label" for="title"
+              >📘 Course Title
+              <span class="req" aria-hidden="true">*</span></label
+            >
+            <input
+              id="title"
+              name="title"
+              type="text"
+              class="input"
+              placeholder="e.g., Introduction to Data Science"
+              required
+              aria-required="true"
+            />
+            <div class="field-hint">Enter the official course title.</div>
+            <div
+              class="field-error"
+              id="title-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- Description (visible) -->
+          <div class="form-row">
+            <label class="label" for="description"
+              >📝 Course Description
+              <span class="req" aria-hidden="true">*</span></label
+            >
+            <textarea
+              id="description"
+              name="description"
+              class="input"
+              rows="4"
+              placeholder="Brief overview of the course"
+              required
+              aria-required="true"
+            ></textarea>
+            <div class="field-hint">
+              Summarize the course scope and purpose.
+            </div>
+            <div
+              class="field-error"
+              id="description-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- CLOs (visible) -->
+          <div class="form-row">
+            <label class="label" for="clos"
+              >🎯 Course-Level Outcomes (CLOs)
+              <span class="req" aria-hidden="true">*</span></label
+            >
+            <textarea
+              id="clos"
+              name="clos"
+              class="input"
+              rows="4"
+              placeholder="List CLOs, one per line"
+              required
+              aria-required="true"
+            ></textarea>
+            <div class="field-hint">Enter one outcome per line or bullet.</div>
+            <div
+              class="field-error"
+              id="clos-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- Course Length (required) -->
+          <div class="form-row">
+            <label class="label" for="length"
+              >📏 Course Length
+              <span class="req" aria-hidden="true">*</span></label
+            >
+            <input
+              id="length"
+              name="length"
+              type="text"
+              class="input"
+              placeholder="e.g., 15 weeks"
+              required
+              aria-required="true"
+            />
+            <div class="field-hint">Required. Helps guide pacing.</div>
+            <div
+              class="field-error"
+              id="length-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- Target Module Count (required, positive integer) -->
+          <div class="form-row">
+            <label class="label" for="targetModuleCount"
+              >#️⃣ Target Module Count
+              <span class="req" aria-hidden="true">*</span></label
+            >
+            <input
+              id="targetModuleCount"
+              name="targetModuleCount"
+              type="number"
+              class="input"
+              inputmode="numeric"
+              min="1"
+              step="1"
+              placeholder="e.g., 6"
+              required
+              aria-required="true"
+            />
+            <div class="field-hint">
+              Required. Positive whole number to guide output scale.
+            </div>
+            <div
+              class="field-error"
+              id="targetModuleCount-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- PLOs (optional) -->
+          <div class="form-row">
+            <label class="label" for="plos"
+              >🎓 Program-Level Outcomes (PLOs)</label
+            >
+            <textarea
+              id="plos"
+              name="plos"
+              class="input"
+              rows="4"
+              placeholder="List PLOs, one per line or bullet"
+            ></textarea>
+            <div class="field-hint">
+              Enter one PLO per line or bullet (optional).
+            </div>
+            <div
+              class="field-error"
+              id="plos-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- Credit Hours (optional, positive integer) -->
+          <div class="form-row">
+            <label class="label" for="creditHours">⏱️ Credit Hours</label>
+            <input
+              id="creditHours"
+              name="creditHours"
+              type="number"
+              class="input"
+              inputmode="numeric"
+              min="1"
+              step="1"
+              placeholder="e.g., 3"
+            />
+            <div class="field-hint">Positive whole number (e.g., 3).</div>
+            <div
+              class="field-error"
+              id="creditHours-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- Key Topics (optional) -->
+          <div class="form-row">
+            <label class="label" for="keyTopics">📚 Key Topics</label>
+            <textarea
+              id="keyTopics"
+              name="keyTopics"
+              class="input"
+              rows="3"
+              placeholder="List key topics, one per line or bullet"
+            ></textarea>
+            <div class="field-hint">
+              Optional. Helps guide module organization.
+            </div>
+            <div
+              class="field-error"
+              id="keyTopics-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- Key Takeaways (optional) -->
+          <div class="form-row">
+            <label class="label" for="keyTakeaways">💡 Key Takeaways</label>
+            <textarea
+              id="keyTakeaways"
+              name="keyTakeaways"
+              class="input"
+              rows="3"
+              placeholder="List key takeaways, one per line or bullet"
+            ></textarea>
+            <div class="field-hint">
+              Optional. Learning highlights or big ideas.
+            </div>
+            <div
+              class="field-error"
+              id="keyTakeaways-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- Prerequisite Knowledge (optional) -->
+          <div class="form-row">
+            <label class="label" for="prerequisites"
+              >🔑 Prerequisite Knowledge</label
+            >
+            <textarea
+              id="prerequisites"
+              name="prerequisites"
+              class="input"
+              rows="3"
+              placeholder="e.g., Intro to Programming; Basic Statistics"
+            ></textarea>
+            <div class="field-hint">Optional. Prior knowledge expected.</div>
+            <div
+              class="field-error"
+              id="prerequisites-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- Course Format (optional, free text) -->
+          <div class="form-row">
+            <label class="label" for="format">🧭 Course Format</label>
+            <input
+              id="format"
+              name="format"
+              type="text"
+              class="input"
+              placeholder="e.g., Online asynchronous, Hybrid, In-person"
+            />
+            <div class="field-hint">Optional. Free text.</div>
+            <div
+              class="field-error"
+              id="format-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- Required Textbook Info (optional) -->
+          <div class="form-row">
+            <label class="label" for="textbook"
+              >📖 Required Textbook Info</label
+            >
+            <textarea
+              id="textbook"
+              name="textbook"
+              class="input"
+              rows="3"
+              placeholder="Title, author, edition, ISBN (if applicable)"
+            ></textarea>
+            <div class="field-hint">
+              Optional. Provide details if applicable.
+            </div>
+            <div
+              class="field-error"
+              id="textbook-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- Class Time Strategy (optional) -->
+          <div class="form-row">
+            <label class="label" for="classTimeStrategy"
+              >🏫 Class Time Strategy</label
+            >
+            <textarea
+              id="classTimeStrategy"
+              name="classTimeStrategy"
+              class="input"
+              rows="3"
+              placeholder="How will in-class time be used?"
+            ></textarea>
+            <div class="field-hint">Optional.</div>
+            <div
+              class="field-error"
+              id="classTimeStrategy-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- Homework Strategy (optional) -->
+          <div class="form-row">
+            <label class="label" for="homeworkStrategy"
+              >🏠 Homework Strategy</label
+            >
+            <textarea
+              id="homeworkStrategy"
+              name="homeworkStrategy"
+              class="input"
+              rows="3"
+              placeholder="What will students do outside of class?"
+            ></textarea>
+            <div class="field-hint">Optional.</div>
+            <div
+              class="field-error"
+              id="homeworkStrategy-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- Major Assessments (optional) -->
+          <div class="form-row">
+            <label class="label" for="majorAssessments"
+              >📊 Major Assessments</label
+            >
+            <textarea
+              id="majorAssessments"
+              name="majorAssessments"
+              class="input"
+              rows="3"
+              placeholder="List major assessments, one per line or bullet"
+            ></textarea>
+            <div class="field-hint">Optional.</div>
+            <div
+              class="field-error"
+              id="majorAssessments-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- Learner Characteristics (optional) -->
+          <div class="form-row">
+            <label class="label" for="learnerCharacteristics"
+              >👥 Learner Characteristics</label
+            >
+            <textarea
+              id="learnerCharacteristics"
+              name="learnerCharacteristics"
+              class="input"
+              rows="3"
+              placeholder="Typical background, needs, constraints"
+            ></textarea>
+            <div class="field-hint">Optional.</div>
+            <div
+              class="field-error"
+              id="learnerCharacteristics-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <!-- Other Information (optional) -->
+          <div class="form-row">
+            <label class="label" for="otherInfo">ℹ️ Other Information</label>
+            <textarea
+              id="otherInfo"
+              name="otherInfo"
+              class="input"
+              rows="3"
+              placeholder="Anything else to inform course design"
+            ></textarea>
+            <div class="field-hint">Optional.</div>
+            <div
+              class="field-error"
+              id="otherInfo-error"
+              role="alert"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <div class="actions">
+            <button id="submit-btn" class="btn btn-primary" type="submit">
+              Generate Course Map
+            </button>
+            <button
+              id="downloadBtn"
+              class="btn"
+              type="button"
+              style="display: none"
+            >
+              Download Markdown
+            </button>
+            <button
+              id="docxBtn"
+              class="btn"
+              type="button"
+              style="display: none"
+            >
+              Download DOCX
+            </button>
+          </div>
+
+          <div
+            id="status"
+            class="status"
+            aria-live="polite"
+            role="status"
+            tabindex="-1"
+          ></div>
+        </form>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <small>© <span id="year"></span> CourseForge</small>
+      </div>
+    </footer>
+
+    <!-- Reset Confirmation Modal -->
+    <div
+      id="confirmResetModal"
+      class="modal-backdrop hidden"
+      aria-hidden="true"
+    >
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirmResetTitle"
+        aria-describedby="confirmResetDesc"
+      >
+        <h2 id="confirmResetTitle">Reset form?</h2>
+        <p id="confirmResetDesc">
+          This will clear all fields and autosaved data.
+        </p>
+        <div class="modal-actions">
+          <button id="cancelReset" class="btn" type="button">Cancel</button>
+          <button id="confirmReset" class="btn btn-danger" type="button">
+            Reset
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Markdown -> HTML, sanitize, then HTML -> DOCX -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
-  <script src="./vendor/html-docx-js/html-docx.js"></script>
-  <script src="./app.js"></script>
-</body>
+    <!-- Markdown -> HTML, sanitize, then HTML -> DOCX -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+    <script src="./vendor/html-docx-js/html-docx.js"></script>
+    <script src="./app.js"></script>
+  </body>
 </html>
