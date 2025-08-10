@@ -20,6 +20,9 @@
         <div class="brand-mark" aria-hidden="true">CF</div>
         <div class="brand-text">CourseForge</div>
       </div>
+      <div class="header-actions">
+        <button id="resetBtn" class="btn btn-danger" type="button" aria-haspopup="dialog" aria-controls="confirmResetModal">Reset</button>
+      </div>
     </div>
   </header>
 
@@ -76,6 +79,22 @@
           <div class="field-error" id="clos-error" role="alert" aria-live="polite"></div>
         </div>
 
+        <!-- Course Length (required) -->
+        <div class="form-row">
+          <label class="label" for="length">Course Length <span class="req" aria-hidden="true">*</span></label>
+          <input id="length" name="length" type="text" class="input" placeholder="e.g., 15 weeks" required aria-required="true" />
+          <div class="field-hint">Required. Helps guide pacing.</div>
+          <div class="field-error" id="length-error" role="alert" aria-live="polite"></div>
+        </div>
+
+        <!-- Target Module Count (required, positive integer) -->
+        <div class="form-row">
+          <label class="label" for="targetModuleCount">Target Module Count <span class="req" aria-hidden="true">*</span></label>
+          <input id="targetModuleCount" name="targetModuleCount" type="number" class="input" inputmode="numeric" min="1" step="1" placeholder="e.g., 6" required aria-required="true" />
+          <div class="field-hint">Required. Positive whole number to guide output scale.</div>
+          <div class="field-error" id="targetModuleCount-error" role="alert" aria-live="polite"></div>
+        </div>
+
         <!-- PLOs (optional) -->
         <div class="form-row">
           <label class="label" for="plos">Program-Level Outcomes (PLOs)</label>
@@ -114,14 +133,6 @@
           <textarea id="prerequisites" name="prerequisites" class="input" rows="3" placeholder="e.g., Intro to Programming; Basic Statistics"></textarea>
           <div class="field-hint">Optional. Prior knowledge expected.</div>
           <div class="field-error" id="prerequisites-error" role="alert" aria-live="polite"></div>
-        </div>
-
-        <!-- Course Length (optional) -->
-        <div class="form-row">
-          <label class="label" for="length">Course Length</label>
-          <input id="length" name="length" type="text" class="input" placeholder="e.g., 15 weeks" />
-          <div class="field-hint">Optional. Helps guide pacing.</div>
-          <div class="field-error" id="length-error" role="alert" aria-live="polite"></div>
         </div>
 
         <!-- Course Format (optional, free text) -->
@@ -180,22 +191,17 @@
           <div class="field-error" id="otherInfo-error" role="alert" aria-live="polite"></div>
         </div>
 
-        <!-- Target Module Count (optional, positive integer) -->
-        <div class="form-row">
-          <label class="label" for="targetModuleCount">Target Module Count</label>
-          <input id="targetModuleCount" name="targetModuleCount" type="number" class="input" inputmode="numeric" min="1" step="1" placeholder="e.g., 6" />
-          <div class="field-hint">Optional. Positive whole number to guide output scale.</div>
-          <div class="field-error" id="targetModuleCount-error" role="alert" aria-live="polite"></div>
-        </div>
 
         <div class="actions">
           <button id="submit-btn" class="btn btn-primary" type="submit">
             Generate Course Map
           </button>
           <button id="downloadBtn" class="btn" type="button" style="display:none;">Download Markdown</button>
+          <button id="copyBtn" class="btn" type="button" style="display:none;">Copy Markdown</button>
+          <button id="docxBtn" class="btn" type="button" style="display:none;">Download DOCX</button>
         </div>
 
-        <div id="status" class="status" aria-live="polite" role="status"></div>
+        <div id="status" class="status" aria-live="polite" role="status" tabindex="-1"></div>
       </form>
     </div>
   </main>
@@ -206,6 +212,23 @@
     </div>
   </footer>
 
+  <!-- Reset Confirmation Modal -->
+  <div id="confirmResetModal" class="modal-backdrop hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmResetTitle" aria-describedby="confirmResetDesc">
+      <h2 id="confirmResetTitle">Reset form?</h2>
+      <p id="confirmResetDesc">This will clear all fields and autosaved data.</p>
+      <div class="modal-actions">
+        <button id="cancelReset" class="btn" type="button">Cancel</button>
+        <button id="confirmReset" class="btn btn-danger" type="button">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Markdown -> HTML, sanitize, then HTML -> DOCX -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+  <script src="https://unpkg.com/html-docx-js@0.4.1/dist/html-docx.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html-to-docx@1.8.0/dist/browser.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>

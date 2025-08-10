@@ -16,31 +16,43 @@
   --border: #e5e7eb;
   --focus: #2563eb;
   --radius: 8px;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
-  --shadow-md: 0 6px 20px rgba(0,0,0,0.12);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.12);
   --container: 1100px;
 }
 
-* { box-sizing: border-box; }
-html, body { height: 100%; }
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
 
 body {
   margin: 0;
   color: var(--text);
   background: #fff;
-  font: 16px/1.6 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font: 16px/1.6 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial,
+    "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-family: "Merriweather", Georgia, "Times New Roman", serif;
   color: var(--brand-navy);
   margin: 0 0 0.6rem;
   line-height: 1.2;
 }
 
-p { margin: 0 0 1rem; color: var(--text); }
+p {
+  margin: 0 0 1rem;
+  color: var(--text);
+}
 
 .container {
   width: 100%;
@@ -85,7 +97,12 @@ p { margin: 0 0 1rem; color: var(--text); }
 /* Hero (gradient background, big heading with yellow accent) */
 .hero {
   position: relative;
-  background: linear-gradient(135deg, #0f2d52 0%, var(--brand-blue) 65%, #2a95ff 100%);
+  background: linear-gradient(
+    135deg,
+    #0f2d52 0%,
+    var(--brand-blue) 65%,
+    #2a95ff 100%
+  );
   color: #fff;
   padding: 56px 0;
 }
@@ -95,7 +112,7 @@ p { margin: 0 0 1rem; color: var(--text); }
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15));
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15));
   pointer-events: none;
 }
 
@@ -155,7 +172,81 @@ p { margin: 0 0 1rem; color: var(--text); }
   color: var(--brand-navy);
 }
 
-.req { color: #ef4444; }
+/* Hover tooltips for field titles (labels) using data-hint set by JS */
+.label[data-hint] {
+  position: relative;
+  cursor: help;
+}
+
+.label[data-hint]::after {
+  content: attr(data-hint);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: 6px;
+  background: #111827; /* near var(--brand-navy) for contrast */
+  color: #fff;
+  font-size: 0.875rem;
+  line-height: 1.3;
+  padding: 8px 10px;
+  border-radius: 6px;
+  box-shadow: var(--shadow-sm);
+  white-space: normal;
+  max-width: 420px;
+  z-index: 20;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity .12s ease, transform .12s ease;
+}
+
+.label[data-hint]::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 12px;
+  margin-top: 2px;
+  border: 6px solid transparent;
+  border-top-color: #111827;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity .12s ease, transform .12s ease;
+}
+
+.label[data-hint]:hover::after,
+.label[data-hint]:hover::before {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Field label emoji icons */
+.label[for]::before {
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* Per-field icons */
+.label[for="title"]::before { content: "📘 "; }
+.label[for="description"]::before { content: "📝 "; }
+.label[for="clos"]::before { content: "🎯 "; }
+.label[for="plos"]::before { content: "🎓 "; }
+.label[for="creditHours"]::before { content: "⏱️ "; }
+.label[for="keyTopics"]::before { content: "📚 "; }
+.label[for="keyTakeaways"]::before { content: "💡 "; }
+.label[for="prerequisites"]::before { content: "🔑 "; }
+.label[for="length"]::before { content: "📏 "; }
+.label[for="format"]::before { content: "🧭 "; }
+.label[for="textbook"]::before { content: "📖 "; }
+.label[for="classTimeStrategy"]::before { content: "🏫 "; }
+.label[for="homeworkStrategy"]::before { content: "🏠 "; }
+.label[for="majorAssessments"]::before { content: "📊 "; }
+.label[for="learnerCharacteristics"]::before { content: "👥 "; }
+.label[for="otherInfo"]::before { content: "ℹ️ "; }
+.label[for="targetModuleCount"]::before { content: "#️⃣ "; }
+
+.req {
+  color: #ef4444;
+}
 
 .input {
   display: block;
@@ -164,9 +255,10 @@ p { margin: 0 0 1rem; color: var(--text); }
   border: 1px solid var(--border);
   border-radius: var(--radius);
   font-size: 1rem;
+  font-family: inherit; /* ensure inputs & textareas use Inter */
   background: #fff;
   color: var(--text);
-  transition: border-color .15s ease, box-shadow .15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .input:focus {
@@ -175,7 +267,37 @@ p { margin: 0 0 1rem; color: var(--text); }
   box-shadow: 0 0 0 4px rgba(30, 115, 190, 0.15);
 }
 
+/* Ensure consistent placeholder font across inputs and textareas */
+.input::-webkit-input-placeholder {
+  font-family: inherit;
+  font-style: normal;
+  line-height: inherit;
+}
+.input::-moz-placeholder {
+  font-family: inherit;
+  font-style: normal;
+  line-height: inherit;
+}
+.input:-ms-input-placeholder {
+  font-family: inherit;
+  font-style: normal;
+  line-height: inherit;
+}
+.input::-ms-input-placeholder {
+  font-family: inherit;
+  font-style: normal;
+  line-height: inherit;
+}
+.input::placeholder {
+  font-family: inherit;
+  font-style: normal;
+  line-height: inherit;
+  color: #9ca3af;
+  opacity: 1;
+}
+
 .field-hint {
+  display: none; /* hidden by default; tooltips will be provided via label title */
   font-size: 0.9rem;
   color: var(--muted);
   margin-top: 6px;
@@ -198,10 +320,13 @@ p { margin: 0 0 1rem; color: var(--text); }
   border-radius: calc(var(--radius) - 2px);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: transform .04s ease, background-color .15s ease, box-shadow .15s ease;
+  transition: transform 0.04s ease, background-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-.btn:active { transform: translateY(1px); }
+.btn:active {
+  transform: translateY(1px);
+}
 
 .btn-primary {
   background: var(--brand-blue);
@@ -244,18 +369,25 @@ p { margin: 0 0 1rem; color: var(--text); }
   display: inline-block;
   width: 18px;
   height: 18px;
-  border: 2.5px solid rgba(255,255,255,0.4);
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
   border-top-color: #fff;
   border-radius: 50%;
-  animation: spin .9s linear infinite;
+  animation: spin 0.9s linear infinite;
   vertical-align: -3px;
   margin-left: 8px;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .spinner { animation: none; border-top-color: rgba(255,255,255,0.9); }
+  .spinner {
+    animation: none;
+    border-top-color: rgba(255, 255, 255, 0.9);
+  }
 }
 
 /* Footer */
@@ -268,7 +400,8 @@ p { margin: 0 0 1rem; color: var(--text); }
 /* A11y helpers */
 .visually-hidden {
   position: absolute !important;
-  height: 1px; width: 1px;
+  height: 1px;
+  width: 1px;
   overflow: hidden;
   clip: rect(1px, 1px, 1px, 1px);
   white-space: nowrap;
@@ -276,7 +409,73 @@ p { margin: 0 0 1rem; color: var(--text); }
 
 .sr-only-hidden {
   position: absolute !important;
-  height: 0; width: 0;
-  overflow: hidden; opacity: 0;
+  height: 0;
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
   pointer-events: none;
+}
+
+/* Header layout for right-aligned actions */
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Danger button */
+.btn-danger {
+  background: #dc2626; /* red-600 */
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-danger:hover {
+  background: #b91c1c; /* red-700 */
+}
+
+/* Modal */
+.hidden {
+  display: none !important;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  width: min(520px, 100%);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* Disable custom label tooltips; use native title tooltips only */
+.label[data-hint]::after,
+.label[data-hint]::before {
+  display: none !important;
+  content: none !important;
+}
+.label[data-hint] {
+  cursor: inherit;
 }
