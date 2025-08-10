@@ -43,7 +43,6 @@ const statusEl = $("#status");
 const submitBtn = $("#submit-btn");
 const yearEl = $("#year");
 const downloadBtn = $("#downloadBtn");
-const copyBtn = $("#copyBtn");
 const docxBtn = $("#docxBtn");
 const resetBtn = $("#resetBtn");
 const resetModal = $("#confirmResetModal");
@@ -109,7 +108,7 @@ function startProgressTimer(
     if (statusEl) {
       statusEl.textContent = `${label} (Elapsed: ${formatElapsed(
         elapsed
-      )} — This may take 1–3 minutes for long maps)`;
+      )})`;
     }
   }, 1000);
 }
@@ -180,27 +179,6 @@ function triggerMarkdownDownload(filename, text) {
   }
 }
 
-async function triggerCopy(text) {
-  try {
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(text);
-      showSuccess("Markdown copied to clipboard.");
-    } else {
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      ta.style.position = "fixed";
-      ta.style.left = "-9999px";
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      ta.remove();
-      showSuccess("Markdown copied to clipboard.");
-    }
-  } catch (e) {
-    console.error(e);
-    showError("Unable to copy. Please download or copy manually.");
-  }
-}
 
 async function triggerDocxDownload(filename, markdown) {
   try {
@@ -414,10 +392,6 @@ function resetFormAndStorage() {
   if (downloadBtn) {
     downloadBtn.style.display = "none";
     downloadBtn.onclick = null;
-  }
-  if (copyBtn) {
-    copyBtn.style.display = "none";
-    copyBtn.onclick = null;
   }
 
   // Clear status (user requested no post-reset message)
@@ -711,16 +685,12 @@ form?.addEventListener("submit", async (e) => {
     ) {
       latestMarkdown = data.markdown;
       showSuccess(
-        "Course map ready. Click Download Markdown or Copy Markdown."
+        "Course map ready. Click to download your course map."
       );
       if (downloadBtn) {
         downloadBtn.style.display = "";
         downloadBtn.onclick = () =>
           triggerMarkdownDownload("course-map.md", latestMarkdown);
-      }
-      if (copyBtn) {
-        copyBtn.style.display = "";
-        copyBtn.onclick = () => triggerCopy(latestMarkdown);
       }
       if (docxBtn) {
         docxBtn.style.display = "";
