@@ -226,7 +226,8 @@ async function triggerDocxDownload(filename, markdown) {
     h2 { font-size: 16pt; margin: 16pt 0 6pt; }
     h3 { font-size: 13pt; margin: 12pt 0 4pt; }
     p, li { font-size: 11pt; }
-    ul, ol { margin: 0 0 12pt 22pt; }
+    ul, ol { margin: 0 0 12pt 0; padding-left: 14pt; }
+    li { margin-left: 0; }
     table { border-collapse: collapse; margin: 12pt 0; width: 100%; }
     th, td { border: 1px solid #ccc; padding: 6pt 8pt; font-size: 10.5pt; }
     code, pre { font-family: Consolas, "Courier New", monospace; font-size: 10pt; }
