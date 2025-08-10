@@ -208,7 +208,9 @@ async function triggerDocxDownload(filename, markdown) {
     const which = await ensureDocxLib();
 
     const unsafeHtml = marked.parse(markdown || "");
-    const cleanHtml = DOMPurify.sanitize(unsafeHtml, { USE_PROFILES: { html: true } });
+    const cleanHtml = DOMPurify.sanitize(unsafeHtml, {
+      USE_PROFILES: { html: true },
+    });
 
     const html = `
 <!DOCTYPE html>
@@ -239,20 +241,25 @@ ${cleanHtml}
 
     const options = {
       orientation: "portrait",
-      margins: { top: 1440, right: 1440, bottom: 1440, left: 1440 } // 1"
+      margins: { top: 1440, right: 1440, bottom: 1440, left: 1440 }, // 1"
     };
 
     let blob = null;
-    if (which === "html-docx-js" && window.htmlDocx?.asBlob) {
+    if (window.htmlDocx && typeof window.htmlDocx.asBlob === "function") {
       blob = window.htmlDocx.asBlob(html, options);
-    } else if (window.HTMLtoDOCX) {
-      const arrayBuffer = await window.HTMLtoDOCX(html, null, options);
-      blob = new Blob([arrayBuffer], {
-        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      });
     } else {
-      showError("DOCX exporter failed to load. Please refresh the page and try again.");
-      return;
+      const HTML2DOCX = window.HTMLtoDOCX || window.HTMLToDOCX;
+      if (typeof HTML2DOCX === "function") {
+        const arrayBuffer = await HTML2DOCX(html, null, options);
+        blob = new Blob([arrayBuffer], {
+          type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        });
+      } else {
+        showError(
+          "DOCX exporter failed to load. Please refresh the page and try again."
+        );
+        return;
+      }
     }
 
     const url = URL.createObjectURL(blob);
@@ -261,10 +268,15 @@ ${cleanHtml}
     a.download = filename;
     document.body.appendChild(a);
     a.click();
-    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 0);
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      a.remove();
+    }, 0);
   } catch (e) {
     console.error(e);
-    showError("Unable to generate DOCX. Please download Markdown or try again.");
+    showError(
+      "Unable to generate DOCX. Please download Markdown or try again."
+    );
   }
 }
 
@@ -311,31 +323,14 @@ async function ensureDocxLib() {
   if (window.HTMLtoDOCX && typeof window.HTMLtoDOCX === "function") {
     return "html-to-docx";
   }
-
-  // Try alternate CDN: html-docx-js via jsDelivr
+  // Attempt to load local vendored browser build for html-docx-js
   try {
-    await loadScriptOnce(
-      "html-docx-js-jsdelivr",
-      "https://cdn.jsdelivr.net/npm/html-docx-js@0.4.1/dist/html-docx.js"
-    );
-    await waitFor(() => window.htmlDocx && typeof window.htmlDocx.asBlob === "function");
+    await loadScriptOnce("html-docx-local", "./vendor/html-docx-js/html-docx.js");
+    await waitFor(() => window.htmlDocx && typeof window.htmlDocx.asBlob === "function", 12000);
     return "html-docx-js";
   } catch (e) {
-    console.warn("Fallback html-docx-js load failed:", e?.message);
+    console.warn("Local html-docx-js load failed:", e?.message);
   }
-
-  // Try alternate CDN: html-to-docx via unpkg
-  try {
-    await loadScriptOnce(
-      "html-to-docx-unpkg",
-      "https://unpkg.com/html-to-docx@1.8.0/dist/browser.js"
-    );
-    await waitFor(() => window.HTMLtoDOCX && typeof window.HTMLtoDOCX === "function");
-    return "html-to-docx";
-  } catch (e) {
-    console.warn("Fallback html-to-docx load failed:", e?.message);
-  }
-
   throw new Error("No DOCX library available after fallbacks.");
 }
 
@@ -728,7 +723,8 @@ form?.addEventListener("submit", async (e) => {
       }
       if (docxBtn) {
         docxBtn.style.display = "";
-        docxBtn.onclick = () => triggerDocxDownload("course-map.docx", latestMarkdown);
+        docxBtn.onclick = () =>
+          triggerDocxDownload("course-map.docx", latestMarkdown);
       }
     } else {
       showError("Unexpected response format. Please try again.");
