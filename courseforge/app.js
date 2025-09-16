@@ -12,6 +12,9 @@
 const FUNCTION_URL =
   "https://hfybwdjnnhdiuqmnyyir.supabase.co/functions/v1/courseforge-generate";
 
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmeWJ3ZGpubmhkaXVxbW55eWlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2MTIwNjcsImV4cCI6MjA3MDE4ODA2N30.h3b7wlo3CkhHoHWNGFkuoKrsJjVIGaWXIdMXO0xZ900";
+
 const $ = (sel) => document.querySelector(sel);
 const form = $("#course-form");
 const titleInput = $("#title");
@@ -475,7 +478,12 @@ async function postGenerate(payload) {
   // Important: CORS will succeed only when this page is served from allowed origin(s).
   const res = await fetch(FUNCTION_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      apikey: SUPABASE_ANON_KEY,
+      "x-client-info": "courseforge-frontend/1.0",
+    },
     body: JSON.stringify(payload),
   });
 
@@ -707,7 +715,11 @@ form?.addEventListener("submit", async (e) => {
       );
     } else {
       const s = err && err.status;
-      if (s === 400)
+      if (s === 401)
+        showError(
+          "Unauthorized. Your browser request is missing Authorization/apikey headers."
+        );
+      else if (s === 400)
         showError(
           err.message || "Invalid input. Check required fields and numbers."
         );
