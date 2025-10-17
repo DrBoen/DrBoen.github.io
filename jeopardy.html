@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phlebotomy Jeopardy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #060a28;
+            color: #ffffff;
+        }
+        .jeopardy-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 8px;
+        }
+        .category-header {
+            background-color: #1e293b;
+            color: #f59e0b;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .point-cell {
+            background-color: #334155;
+            color: #f59e0b;
+            font-weight: 700;
+            font-size: 2rem;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .point-cell:hover {
+            transform: scale(1.05);
+            background-color: #475569;
+        }
+        .point-cell.answered {
+            background-color: #1e293b;
+            color: #475569;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-backdrop.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-content {
+            background-color: #060a28;
+            border: 4px solid #f59e0b;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            min-height: 400px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal-backdrop.active .modal-content {
+            transform: scale(1);
+        }
+        #question-text, #answer-text {
+            color: #ffffff;
+            font-size: 2.25rem;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        #answer-text {
+            color: #10b981;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 lg:p-8">
+
+    <div class="container mx-auto">
+        <header class="text-center mb-6">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white uppercase tracking-wider" style="color: #f59e0b;">Phlebotomy Jeopardy</h1>
+            <p class="text-slate-300 mt-2">A fun way to test your knowledge!</p>
+        </header>
+
+        <main id="game-board" class="jeopardy-grid mb-6"></main>
+        
+        <footer class="text-center">
+            <button id="reset-button" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105">
+                Reset Game
+            </button>
+        </footer>
+    </div>
+
+    <!-- Question/Answer Modal -->
+    <div id="modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div id="question-container">
+                <p id="question-text" class="mb-8"></p>
+                <button id="reveal-answer-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105">
+                    Reveal Answer
+                </button>
+            </div>
+            <div id="answer-container" class="hidden">
+                <p id="answer-text" class="mb-8"></p>
+                <button id="close-modal-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const gameData = {
+            "Anatomy & Physiology": [
+                { points: 100, question: "The most common vein used for venipuncture in the antecubital fossa.", answer: "What is the median cubital vein?" },
+                { points: 200, question: "These vessels carry oxygenated blood away from the heart.", answer: "What are arteries?" },
+                { points: 300, question: "The liquid portion of blood that has been allowed to clot.", answer: "What is serum?" },
+                { points: 400, question: "The three main veins in the antecubital fossa are the median cubital, cephalic, and this one.", answer: "What is the basilic vein?" },
+                { points: 500, question: "The medical term for the process of blood cell formation.", answer: "What is hematopoiesis?" }
+            ],
+            "Equipment & Supplies": [
+                { points: 100, question: "The color of the tube top for a test that requires serum and contains no anticoagulant.", answer: "What is red?" },
+                { points: 200, question: "This piece of equipment is tied around the arm to make veins more prominent.", answer: "What is a tourniquet?" },
+                { points: 300, question: "The anticoagulant additive found in a lavender top tube.", answer: "What is EDTA?" },
+                { points: 400, question: "The term for the internal diameter, or bore, of a needle.", answer: "What is gauge?" },
+                { points: 500, question: "This additive, found in gray top tubes, prevents the breakdown of glucose.", answer: "What is sodium fluoride?" }
+            ],
+            "Procedures & Techniques": [
+                { points: 100, question: "The maximum recommended time a tourniquet should be left on a patient's arm.", answer: "What is 1 minute?" },
+                { points: 200, question: "The correct order of draw for these tubes: light blue, red, and lavender.", answer: "What is Light Blue, then Red, then Lavender?" },
+                { points: 300, question: "The recommended angle of needle insertion for a routine venipuncture.", answer: "What is 15 to 30 degrees?" },
+                { points: 400, question: "A collection of blood outside a blood vessel, commonly known as a bruise.", answer: "What is a hematoma?" },
+                { points: 500, question: "The destruction of red blood cells, which can alter test results if it occurs during collection.", answer: "What is hemolysis?" }
+            ],
+            "Safety & Infection Control": [
+                { points: 100, question: "The acronym for the gear worn to protect against hazards, like gloves and gowns.", answer: "What is PPE (Personal Protective Equipment)?" },
+                { points: 200, question: "The single most important practice to prevent the spread of infection.", answer: "What is hand hygiene?" },
+                { points: 300, question: "Used needles and lancets must be disposed of in this type of container.", answer: "What is a sharps container?" },
+                { points: 400, question: "An inanimate object, such as a countertop or piece of equipment, that can transmit infectious agents.", answer: "What is a fomite?" },
+                { points: 500, question: "This US government agency mandates the use of safety-engineered needles to prevent needlesticks.", answer: "What is OSHA?" }
+            ],
+            "Special Cases & Tests": [
+                { points: 100, question: "A common test for blood sugar levels, often collected in a gray top tube.", answer: "What is a glucose test?" },
+                { points: 200, question: "The preferred site for blood collection in infants under one year of age.", answer: "What is a heel stick?" },
+                { points: 300, question: "Tests like a fasting glucose or lipid panel require the patient to not eat for this many hours.", answer: "What is 8 to 12 hours?" },
+                { points: 400, question: "These are drawn to detect bacteria in the blood and require strict aseptic (sterile) technique.", answer: "What are blood cultures?" },
+                { points: 500, question: "This test, collected in a light blue top tube, is used to monitor heparin therapy.", answer: "What is aPTT (Activated Partial Thromboplastin Time)?" }
+            ]
+        };
+
+        const gameBoard = document.getElementById('game-board');
+        const modal = document.getElementById('modal');
+        const questionText = document.getElementById('question-text');
+        const answerText = document.getElementById('answer-text');
+        const questionContainer = document.getElementById('question-container');
+        const answerContainer = document.getElementById('answer-container');
+        const revealAnswerBtn = document.getElementById('reveal-answer-btn');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const resetButton = document.getElementById('reset-button');
+        
+        let currentAnswer = '';
+
+        function createBoard() {
+            // Clear existing board
+            gameBoard.innerHTML = '';
+
+            // Get category names
+            const categories = Object.keys(gameData);
+
+            // Create category headers
+            categories.forEach(category => {
+                const categoryElement = document.createElement('div');
+                categoryElement.classList.add('category-header');
+                categoryElement.textContent = category;
+                gameBoard.appendChild(categoryElement);
+            });
+
+            // Create point cells
+            for (let i = 0; i < 5; i++) { // For each point value
+                categories.forEach(category => {
+                    const questionData = gameData[category][i];
+                    const cell = document.createElement('div');
+                    cell.classList.add('point-cell');
+                    cell.textContent = `$${questionData.points}`;
+                    cell.dataset.category = category;
+                    cell.dataset.points = questionData.points;
+                    cell.addEventListener('click', handleCellClick);
+                    gameBoard.appendChild(cell);
+                });
+            }
+        }
+        
+        function handleCellClick(event) {
+            const target = event.target;
+            const category = target.dataset.category;
+            const points = parseInt(target.dataset.points);
+
+            const questionData = gameData[category].find(q => q.points === points);
+            
+            if (questionData) {
+                questionText.textContent = questionData.question;
+                currentAnswer = questionData.answer;
+                
+                // Reset modal state
+                questionContainer.classList.remove('hidden');
+                answerContainer.classList.add('hidden');
+                
+                modal.classList.add('active');
+                target.classList.add('answered');
+            }
+        }
+
+        function revealAnswer() {
+            answerText.textContent = currentAnswer;
+            questionContainer.classList.add('hidden');
+            answerContainer.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        function resetGame() {
+            createBoard(); // Re-creates the board from scratch
+        }
+
+        // Event Listeners
+        revealAnswerBtn.addEventListener('click', revealAnswer);
+        closeModalBtn.addEventListener('click', closeModal);
+        resetButton.addEventListener('click', resetGame);
+        
+        // Close modal if clicking on the backdrop
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Initialize Game
+        createBoard();
+
+    </script>
+</body>
+</html>
