@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SDR Vocabulary SAFMEDS</title>
+    <style>
+      :root {
+        --bg: #f4f8fc;
+        --surface: #ffffff;
+        --surface-muted: #eaf3fb;
+        --border: #cfe0f1;
+        --text: #14324d;
+        --muted: #5f7891;
+        --primary: #0072ce;
+        --primary-dark: #005a96;
+        --success: #147a55;
+        --danger: #bf2f45;
+        --shadow: 0 20px 40px rgba(0, 90, 150, 0.1);
+        --radius: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(180deg, #f7fbff 0%, #eef5fb 100%);
+        color: var(--text);
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        padding: 24px;
+      }
+
+      .app {
+        width: min(100%, 960px);
+        display: grid;
+        gap: 20px;
+      }
+
+      .hero,
+      .stats,
+      .card-panel,
+      .guide,
+      .results {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .hero {
+        padding: 28px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: var(--primary);
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 4vw, 3.25rem);
+        line-height: 1;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .hero p {
+        margin: 0;
+        max-width: 68ch;
+        color: var(--muted);
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding-top: 8px;
+      }
+
+      .stats {
+        padding: 18px;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .stat {
+        padding: 16px;
+        border-radius: 14px;
+        background: var(--surface-muted);
+        border: 1px solid transparent;
+      }
+
+      .stat-label {
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+
+      .stat-value {
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        font-weight: 700;
+        color: var(--primary-dark);
+      }
+
+      .card-panel {
+        padding: 24px;
+        display: grid;
+        gap: 18px;
+      }
+
+      .card-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 0.95rem;
+        flex-wrap: wrap;
+      }
+
+      .card-shell {
+        min-height: 320px;
+        border-radius: 22px;
+        border: 2px solid var(--border);
+        background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        text-align: center;
+      }
+
+      .card-content {
+        width: min(100%, 640px);
+        display: grid;
+        gap: 16px;
+      }
+
+      .card-side {
+        margin: 0;
+        color: var(--primary);
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .card-text {
+        margin: 0;
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        line-height: 1.15;
+        font-weight: 700;
+      }
+
+      .card-helper {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      .controls,
+      .secondary-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      button {
+        appearance: none;
+        border: 0;
+        border-radius: 12px;
+        padding: 14px 18px;
+        min-height: 48px;
+        font-size: 0.98rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          background-color 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      button:focus-visible {
+        outline: 3px solid rgba(0, 114, 206, 0.32);
+        outline-offset: 3px;
+      }
+
+      button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-primary {
+        background: var(--primary-dark);
+        color: #ffffff;
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background: var(--primary);
+      }
+
+      .btn-secondary {
+        background: #dcebf8;
+        color: var(--primary-dark);
+      }
+
+      .btn-secondary:hover:not(:disabled) {
+        background: #cfe3f6;
+      }
+
+      .btn-success {
+        background: #dff4eb;
+        color: var(--success);
+      }
+
+      .btn-success:hover:not(:disabled) {
+        background: #d1efe2;
+      }
+
+      .btn-danger {
+        background: #fbe3e7;
+        color: var(--danger);
+      }
+
+      .btn-danger:hover:not(:disabled) {
+        background: #f8d6dd;
+      }
+
+      .guide,
+      .results {
+        padding: 22px;
+      }
+
+      .guide h2,
+      .results h2 {
+        margin: 0 0 12px;
+        font-size: 1.35rem;
+        color: var(--primary-dark);
+      }
+
+      .guide ul,
+      .results ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .results {
+        display: none;
+        gap: 14px;
+      }
+
+      .results.visible {
+        display: grid;
+      }
+
+      .score-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: fit-content;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: #e8f3fc;
+        color: var(--primary-dark);
+        font-weight: 700;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 16px;
+        }
+
+        .stats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .card-panel,
+        .hero,
+        .guide,
+        .results {
+          padding: 18px;
+        }
+
+        .card-shell {
+          min-height: 280px;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .stats {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-actions,
+        .controls,
+        .secondary-controls {
+          flex-direction: column;
+        }
+
+        button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <section class="hero" aria-labelledby="app-title">
+        <p class="eyebrow">SAFMEDS Vocabulary Sprint</p>
+        <h1 id="app-title">Entry-Level SDR Flashcards</h1>
+        <p>
+          Practice 10 essential Sales Development Representative terms with a
+          one-minute, shuffled flashcard routine. Flip the card, decide if you
+          knew it, and build speed plus accuracy.
+        </p>
+        <div class="hero-actions">
+          <button id="startBtn" class="btn-primary" type="button">
+            Start 1-Minute Sprint
+          </button>
+          <button id="restartBtn" class="btn-secondary" type="button">
+            Reset Deck
+          </button>
+        </div>
+      </section>
+
+      <section class="stats" aria-label="Session statistics">
+        <div class="stat">
+          <span class="stat-label">Time Left</span>
+          <span id="timeLeft" class="stat-value">60s</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Cards Seen</span>
+          <span id="cardsSeen" class="stat-value">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Correct</span>
+          <span id="correctCount" class="stat-value">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Incorrect</span>
+          <span id="incorrectCount" class="stat-value">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Accuracy</span>
+          <span id="accuracy" class="stat-value">0%</span>
+        </div>
+      </section>
+
+      <section class="card-panel" aria-labelledby="card-heading">
+        <div class="card-meta">
+          <strong id="card-heading">Current Flashcard</strong>
+          <span id="deckStatus"
+            >Ready to begin. Cards will shuffle each round.</span
+          >
+        </div>
+
+        <div class="card-shell" aria-live="polite" aria-atomic="true">
+          <div class="card-content">
+            <p id="cardSide" class="card-side">Term</p>
+            <p id="cardText" class="card-text">
+              Press Start to begin your SDR vocabulary sprint.
+            </p>
+            <p id="cardHelper" class="card-helper">
+              Keyboard shortcuts: Space = flip, C = correct, I = incorrect, R =
+              reset.
+            </p>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button id="flipBtn" class="btn-secondary" type="button" disabled>
+            Flip Card
+          </button>
+          <button id="correctBtn" class="btn-success" type="button" disabled>
+            I Knew It
+          </button>
+          <button id="incorrectBtn" class="btn-danger" type="button" disabled>
+            I Missed It
+          </button>
+        </div>
+
+        <div class="secondary-controls">
+          <button id="nextBtn" class="btn-primary" type="button" disabled>
+            Next Card
+          </button>
+        </div>
+
+        <p id="announcer" class="sr-only" aria-live="polite"></p>
+      </section>
+
+      <section class="results" id="resultsPanel" aria-labelledby="resultsTitle">
+        <h2 id="resultsTitle">Sprint Summary</h2>
+        <div id="scoreChip" class="score-chip">You are ready to practice.</div>
+        <ul id="resultsList"></ul>
+      </section>
+
+      <section class="guide" aria-labelledby="guideTitle">
+        <h2 id="guideTitle">How this SAFMEDS activity works</h2>
+        <ul>
+          <li>Start a timed one-minute sprint.</li>
+          <li>
+            Cards are shuffled every round to keep retrieval fast and varied.
+          </li>
+          <li>
+            Read the term, flip for the definition, then score yourself as
+            correct or incorrect.
+          </li>
+          <li>
+            Use the summary to track fluency, speed, and accuracy over repeated
+            practice.
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const vocabulary = [
+          {
+            term: "Lead",
+            definition:
+              "A person or company that may have interest in your product or service.",
+          },
+          {
+            term: "Prospect",
+            definition:
+              "A lead that fits your target audience and is worth active outreach.",
+          },
+          {
+            term: "Qualified Lead",
+            definition:
+              "A lead that meets agreed criteria and is more likely to become a sales opportunity.",
+          },
+          {
+            term: "Outreach",
+            definition:
+              "The act of contacting leads or prospects through calls, email, or social messages.",
+          },
+          {
+            term: "Cold Call",
+            definition:
+              "A phone call to someone who has not previously expressed interest in your offer.",
+          },
+          {
+            term: "Cold Email",
+            definition:
+              "An introductory email sent to a prospect with whom you have no prior relationship.",
+          },
+          {
+            term: "Discovery Call",
+            definition:
+              "A conversation used to learn about a prospect’s needs, goals, and challenges.",
+          },
+          {
+            term: "Objection",
+            definition:
+              "A concern or hesitation raised by a prospect that needs to be understood and addressed.",
+          },
+          {
+            term: "CRM",
+            definition:
+              "Customer Relationship Management software used to track leads, activities, and notes.",
+          },
+          {
+            term: "Follow-Up",
+            definition:
+              "A later message or call that keeps the conversation moving after initial outreach.",
+          },
+        ];
+
+        const state = {
+          deck: [],
+          currentIndex: 0,
+          revealed: false,
+          running: false,
+          timeLeft: 60,
+          correct: 0,
+          incorrect: 0,
+          cardsSeen: 0,
+          timerId: null,
+        };
+
+        const elements = {
+          startBtn: document.getElementById("startBtn"),
+          restartBtn: document.getElementById("restartBtn"),
+          flipBtn: document.getElementById("flipBtn"),
+          correctBtn: document.getElementById("correctBtn"),
+          incorrectBtn: document.getElementById("incorrectBtn"),
+          nextBtn: document.getElementById("nextBtn"),
+          timeLeft: document.getElementById("timeLeft"),
+          cardsSeen: document.getElementById("cardsSeen"),
+          correctCount: document.getElementById("correctCount"),
+          incorrectCount: document.getElementById("incorrectCount"),
+          accuracy: document.getElementById("accuracy"),
+          cardSide: document.getElementById("cardSide"),
+          cardText: document.getElementById("cardText"),
+          cardHelper: document.getElementById("cardHelper"),
+          deckStatus: document.getElementById("deckStatus"),
+          resultsPanel: document.getElementById("resultsPanel"),
+          scoreChip: document.getElementById("scoreChip"),
+          resultsList: document.getElementById("resultsList"),
+          announcer: document.getElementById("announcer"),
+        };
+
+        function shuffleDeck(items) {
+          const cloned = items.slice();
+          for (let index = cloned.length - 1; index > 0; index -= 1) {
+            const swapIndex = Math.floor(Math.random() * (index + 1));
+            [cloned[index], cloned[swapIndex]] = [
+              cloned[swapIndex],
+              cloned[index],
+            ];
+          }
+          return cloned;
+        }
+
+        function accuracyValue() {
+          const attempts = state.correct + state.incorrect;
+          return attempts === 0
+            ? 0
+            : Math.round((state.correct / attempts) * 100);
+        }
+
+        function getCurrentCard() {
+          if (state.deck.length === 0) {
+            return null;
+          }
+
+          return state.deck[state.currentIndex % state.deck.length];
+        }
+
+        function setButtonsForIdle() {
+          elements.flipBtn.disabled = true;
+          elements.correctBtn.disabled = true;
+          elements.incorrectBtn.disabled = true;
+          elements.nextBtn.disabled = true;
+        }
+
+        function setButtonsForTerm() {
+          elements.flipBtn.disabled = false;
+          elements.correctBtn.disabled = true;
+          elements.incorrectBtn.disabled = true;
+          elements.nextBtn.disabled = true;
+        }
+
+        function setButtonsForDefinition() {
+          elements.flipBtn.disabled = true;
+          elements.correctBtn.disabled = false;
+          elements.incorrectBtn.disabled = false;
+          elements.nextBtn.disabled = false;
+        }
+
+        function updateStats() {
+          elements.timeLeft.textContent = state.timeLeft + "s";
+          elements.cardsSeen.textContent = String(state.cardsSeen);
+          elements.correctCount.textContent = String(state.correct);
+          elements.incorrectCount.textContent = String(state.incorrect);
+          elements.accuracy.textContent = accuracyValue() + "%";
+        }
+
+        function updateResults() {
+          const attempts = state.correct + state.incorrect;
+          const pace = state.cardsSeen;
+          const accuracy = accuracyValue();
+          const scoreMessage =
+            accuracy >= 80
+              ? "Strong fluency — keep pushing speed."
+              : accuracy >= 60
+                ? "Solid progress — repeat for smoother recall."
+                : "Keep practicing — accuracy improves with repetition.";
+
+          elements.scoreChip.textContent = scoreMessage;
+          elements.resultsList.innerHTML = [
+            "<li><strong>Cards completed:</strong> " + pace + "</li>",
+            "<li><strong>Correct:</strong> " + state.correct + "</li>",
+            "<li><strong>Incorrect:</strong> " + state.incorrect + "</li>",
+            "<li><strong>Accuracy:</strong> " + accuracy + "%</li>",
+            "<li><strong>Tip:</strong> Run another one-minute sprint and aim to increase speed without losing accuracy.</li>",
+          ].join("");
+        }
+
+        function announce(message) {
+          elements.announcer.textContent = message;
+        }
+
+        function renderCard() {
+          const card = getCurrentCard();
+
+          if (!card) {
+            elements.cardSide.textContent = "Term";
+            elements.cardText.textContent =
+              "Press Start to begin your SDR vocabulary sprint.";
+            elements.cardHelper.textContent =
+              "Keyboard shortcuts: Space = flip, C = correct, I = incorrect, R = reset.";
+            elements.deckStatus.textContent =
+              "Ready to begin. Cards will shuffle each round.";
+            setButtonsForIdle();
+            return;
+          }
+
+          const cardNumber = (state.currentIndex % state.deck.length) + 1;
+          elements.deckStatus.textContent =
+            "Card " +
+            cardNumber +
+            " of " +
+            state.deck.length +
+            " in the shuffled deck.";
+
+          if (state.revealed) {
+            elements.cardSide.textContent = "Definition";
+            elements.cardText.textContent = card.definition;
+            elements.cardHelper.textContent =
+              "Score yourself, or move to the next card if you want another pass.";
+            setButtonsForDefinition();
+          } else {
+            elements.cardSide.textContent = "Term";
+            elements.cardText.textContent = card.term;
+            elements.cardHelper.textContent =
+              "Say the definition out loud, then flip the card to check yourself.";
+            setButtonsForTerm();
+          }
+        }
+
+        function nextCard() {
+          state.currentIndex = (state.currentIndex + 1) % state.deck.length;
+          state.revealed = false;
+          renderCard();
+        }
+
+        function scoreCard(isCorrect) {
+          if (!state.running || !state.revealed) {
+            return;
+          }
+
+          if (isCorrect) {
+            state.correct += 1;
+            announce("Marked correct.");
+          } else {
+            state.incorrect += 1;
+            announce("Marked incorrect.");
+          }
+
+          state.cardsSeen += 1;
+          updateStats();
+          nextCard();
+        }
+
+        function stopSession() {
+          state.running = false;
+
+          if (state.timerId !== null) {
+            window.clearInterval(state.timerId);
+            state.timerId = null;
+          }
+
+          setButtonsForIdle();
+          elements.startBtn.disabled = false;
+          elements.resultsPanel.classList.add("visible");
+          updateResults();
+          elements.deckStatus.textContent =
+            "Sprint complete. Reset or start a new shuffled round.";
+          elements.cardSide.textContent = "Time";
+          elements.cardText.textContent =
+            "Great work. Review your results and go again.";
+          elements.cardHelper.textContent =
+            "Repeated one-minute sprints help build fluent recall.";
+          announce("Sprint complete.");
+        }
+
+        function startSession() {
+          if (state.timerId !== null) {
+            window.clearInterval(state.timerId);
+          }
+
+          state.deck = shuffleDeck(vocabulary);
+          state.currentIndex = 0;
+          state.revealed = false;
+          state.running = true;
+          state.timeLeft = 60;
+          state.correct = 0;
+          state.incorrect = 0;
+          state.cardsSeen = 0;
+
+          elements.resultsPanel.classList.remove("visible");
+          elements.startBtn.disabled = true;
+          updateStats();
+          renderCard();
+          announce("Sprint started.");
+
+          state.timerId = window.setInterval(function () {
+            state.timeLeft -= 1;
+            updateStats();
+
+            if (state.timeLeft <= 0) {
+              state.timeLeft = 0;
+              updateStats();
+              stopSession();
+            }
+          }, 1000);
+        }
+
+        function resetSession() {
+          if (state.timerId !== null) {
+            window.clearInterval(state.timerId);
+            state.timerId = null;
+          }
+
+          state.deck = [];
+          state.currentIndex = 0;
+          state.revealed = false;
+          state.running = false;
+          state.timeLeft = 60;
+          state.correct = 0;
+          state.incorrect = 0;
+          state.cardsSeen = 0;
+
+          elements.resultsPanel.classList.remove("visible");
+          elements.startBtn.disabled = false;
+          updateStats();
+          renderCard();
+          announce("Deck reset.");
+        }
+
+        elements.startBtn.addEventListener("click", startSession);
+        elements.restartBtn.addEventListener("click", resetSession);
+        elements.flipBtn.addEventListener("click", function () {
+          if (!state.running) {
+            return;
+          }
+
+          state.revealed = true;
+          renderCard();
+          announce("Definition revealed.");
+        });
+        elements.correctBtn.addEventListener("click", function () {
+          scoreCard(true);
+        });
+        elements.incorrectBtn.addEventListener("click", function () {
+          scoreCard(false);
+        });
+        elements.nextBtn.addEventListener("click", function () {
+          if (!state.running || !state.revealed) {
+            return;
+          }
+
+          nextCard();
+          announce("Moved to next card.");
+        });
+
+        window.addEventListener("keydown", function (event) {
+          const target = event.target;
+          const isTypingTarget =
+            target instanceof HTMLElement &&
+            (target.tagName === "INPUT" ||
+              target.tagName === "TEXTAREA" ||
+              target.isContentEditable);
+
+          if (isTypingTarget) {
+            return;
+          }
+
+          const key = event.key.toLowerCase();
+
+          if (key === "r") {
+            event.preventDefault();
+            resetSession();
+            return;
+          }
+
+          if (!state.running) {
+            if (key === "enter") {
+              event.preventDefault();
+              startSession();
+            }
+            return;
+          }
+
+          if (key === " " || key === "spacebar") {
+            event.preventDefault();
+            if (!state.revealed) {
+              state.revealed = true;
+              renderCard();
+              announce("Definition revealed.");
+            }
+            return;
+          }
+
+          if (key === "c") {
+            event.preventDefault();
+            scoreCard(true);
+            return;
+          }
+
+          if (key === "i") {
+            event.preventDefault();
+            scoreCard(false);
+          }
+        });
+
+        updateStats();
+        renderCard();
+        updateResults();
+      })();
+    </script>
+  </body>
+</html>
