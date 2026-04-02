@@ -1,56 +1,742 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DrBoen's GitHub Pages</title>
+    <meta
+      name="description"
+      content="A hub for DrBoen's GitHub Pages projects, tools, games, and learning experiences."
+    />
+    <style>
+      :root {
+        --bg: #06030f;
+        --bg-alt: #120724;
+        --panel: rgba(12, 14, 32, 0.78);
+        --panel-strong: rgba(19, 20, 42, 0.92);
+        --text: #f4ecff;
+        --muted: #b8b5d6;
+        --pink: #ff4fd8;
+        --cyan: #4df6ff;
+        --lime: #b8ff60;
+        --gold: #ffd166;
+        --border: rgba(124, 238, 255, 0.28);
+        --shadow: 0 0 30px rgba(77, 246, 255, 0.12);
+        --radius: 20px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(255, 79, 216, 0.16),
+            transparent 28%
+          ),
+          radial-gradient(
+            circle at top right,
+            rgba(77, 246, 255, 0.14),
+            transparent 24%
+          ),
+          radial-gradient(
+            circle at bottom center,
+            rgba(184, 255, 96, 0.08),
+            transparent 30%
+          ),
+          linear-gradient(180deg, #090412 0%, #07040f 45%, #030208 100%);
+        overflow-x: hidden;
+      }
+
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: -2;
+      }
+
+      body::before {
+        background:
+          radial-gradient(
+            circle at 12% 18%,
+            rgba(255, 255, 255, 0.5) 0 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 83% 12%,
+            rgba(255, 255, 255, 0.45) 0 1.2px,
+            transparent 1.2px
+          ),
+          radial-gradient(
+            circle at 28% 72%,
+            rgba(255, 255, 255, 0.4) 0 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 74% 64%,
+            rgba(255, 255, 255, 0.4) 0 1.2px,
+            transparent 1.2px
+          ),
+          radial-gradient(
+            circle at 48% 36%,
+            rgba(255, 255, 255, 0.32) 0 1px,
+            transparent 1px
+          );
+        background-size: 340px 340px;
+        opacity: 0.7;
+        animation: drift 24s linear infinite;
+      }
+
+      body::after {
+        background: repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.035) 0,
+          rgba(255, 255, 255, 0.035) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+        opacity: 0.22;
+        mix-blend-mode: soft-light;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .shell {
+        width: min(1120px, calc(100% - 2rem));
+        margin: 0 auto;
+        padding: 32px 0 56px;
+      }
+
+      .panel {
+        position: relative;
+        background: linear-gradient(
+          180deg,
+          rgba(20, 22, 48, 0.9),
+          rgba(8, 10, 24, 0.88)
+        );
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow:
+          var(--shadow),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(12px);
+        overflow: hidden;
+      }
+
+      .panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(77, 246, 255, 0.08),
+          transparent 38%,
+          rgba(255, 79, 216, 0.08)
+        );
+        pointer-events: none;
+      }
+
+      .hero {
+        padding: 32px;
+        margin-bottom: 24px;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.9fr);
+        gap: 24px;
+        margin-top: 22px;
+      }
+
+      .title {
+        margin: 18px 0 12px;
+        font-size: clamp(2.8rem, 7vw, 5.8rem);
+        line-height: 0.95;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        position: relative;
+        text-shadow:
+          0 0 8px rgba(255, 79, 216, 0.9),
+          0 0 22px rgba(77, 246, 255, 0.55);
+      }
+
+      .glitch {
+        position: relative;
+        display: inline-block;
+      }
+
+      .glitch::before,
+      .glitch::after {
+        content: attr(data-text);
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .glitch::before {
+        color: var(--cyan);
+        transform: translate(3px, -1px);
+        opacity: 0.45;
+        animation: glitchShift 2.8s infinite ease-in-out alternate;
+      }
+
+      .glitch::after {
+        color: var(--pink);
+        transform: translate(-3px, 1px);
+        opacity: 0.4;
+        animation: glitchShift 2.2s infinite ease-in-out alternate-reverse;
+      }
+
+      .lead {
+        max-width: 62ch;
+        margin: 0;
+        color: var(--muted);
+        font-size: 1.08rem;
+        line-height: 1.7;
+      }
+
+      .status-panel {
+        padding: 18px;
+        border-radius: 18px;
+        background: rgba(7, 11, 23, 0.74);
+        border: 1px solid rgba(77, 246, 255, 0.16);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+      }
+
+      .status-label {
+        margin: 0 0 10px;
+        color: var(--gold);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        font-size: 0.76rem;
+      }
+
+      .status-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 12px;
+      }
+
+      .status-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        font-family: "Courier New", monospace;
+        font-size: 0.95rem;
+      }
+
+      .status-item:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      .status-value {
+        color: var(--cyan);
+        text-align: right;
+      }
+
+      .signal {
+        display: inline-flex;
+        align-items: flex-end;
+        gap: 4px;
+        height: 16px;
+      }
+
+      .signal span {
+        width: 5px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, var(--lime), var(--cyan));
+        box-shadow: 0 0 12px rgba(184, 255, 96, 0.3);
+        animation: bounce 1s infinite ease-in-out;
+      }
+
+      .signal span:nth-child(1) {
+        height: 35%;
+      }
+
+      .signal span:nth-child(2) {
+        height: 55%;
+        animation-delay: 0.12s;
+      }
+
+      .signal span:nth-child(3) {
+        height: 78%;
+        animation-delay: 0.24s;
+      }
+
+      .signal span:nth-child(4) {
+        height: 100%;
+        animation-delay: 0.36s;
+      }
+
+      .projects {
+        padding: 28px;
+      }
+
+      .section-heading {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 22px;
+      }
+
+      .section-heading h2 {
+        margin: 0;
+        font-size: clamp(1.6rem, 4vw, 2.4rem);
+      }
+
+      .section-heading p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 48ch;
+      }
+
+      .project-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .project-card {
+        position: relative;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 18px;
+        min-height: 100%;
+        padding: 20px 22px;
+        border-radius: 18px;
+        text-decoration: none;
+        color: inherit;
+        background: linear-gradient(
+          180deg,
+          rgba(17, 19, 40, 0.96),
+          rgba(8, 10, 24, 0.92)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+        overflow: hidden;
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          box-shadow 180ms ease;
+      }
+
+      .project-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+          rgba(77, 246, 255, 0.2),
+          transparent 34%
+        );
+        opacity: 0;
+        transition: opacity 180ms ease;
+        pointer-events: none;
+      }
+
+      .project-card:hover,
+      .project-card:focus-visible,
+      .project-card.is-active {
+        transform: translateY(-6px);
+        border-color: rgba(77, 246, 255, 0.42);
+        box-shadow:
+          0 18px 40px rgba(0, 0, 0, 0.34),
+          0 0 24px rgba(77, 246, 255, 0.12);
+      }
+
+      .project-card:hover::before,
+      .project-card:focus-visible::before,
+      .project-card.is-active::before {
+        opacity: 1;
+      }
+
+      .card-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 52px;
+        min-height: 52px;
+        padding: 0 12px;
+        margin: 0;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        font-family: "Courier New", monospace;
+        color: var(--gold);
+        opacity: 0.9;
+      }
+
+      .project-copy {
+        min-width: 0;
+      }
+
+      .project-card h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        line-height: 1.35;
+      }
+
+      .project-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .project-arrow {
+        color: var(--cyan);
+        font-size: 1.4rem;
+        opacity: 0.9;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: scaleY(0.9);
+          opacity: 0.9;
+        }
+        50% {
+          transform: scaleY(1.08);
+          opacity: 1;
+        }
+      }
+
+      @keyframes drift {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(18px);
+        }
+      }
+
+      @keyframes glitchShift {
+        0%,
+        100% {
+          clip-path: inset(0 0 0 0);
+        }
+        20% {
+          clip-path: inset(10% 0 66% 0);
+        }
+        40% {
+          clip-path: inset(78% 0 2% 0);
+        }
+        60% {
+          clip-path: inset(38% 0 30% 0);
+        }
+        80% {
+          clip-path: inset(4% 0 80% 0);
+        }
+      }
+
+      @media (max-width: 860px) {
+        .hero-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .hero,
+        .projects {
+          padding: 22px;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .shell {
+          width: min(100% - 1rem, 1120px);
+          padding-top: 16px;
+        }
+
+        .title {
+          letter-spacing: 0.02em;
+        }
+
+        .section-heading {
+          align-items: stretch;
+        }
+
+        .project-card {
+          grid-template-columns: 1fr;
+          align-items: start;
+        }
+
+        .project-arrow {
+          display: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-XQKTLTHN5V"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-XQKTLTHN5V");
+    </script>
   </head>
-  <!-- Google tag (gtag.js) -->
-  <script
-    async
-    src="https://www.googletagmanager.com/gtag/js?id=G-XQKTLTHN5V"
-  ></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag("js", new Date());
-
-    gtag("config", "G-XQKTLTHN5V");
-  </script>
   <body>
-    <h1>Hello World</h1>
-    <p>I'm hosted with GitHub Pages.</p>
+    <main class="shell">
+      <header class="panel hero">
+        <div class="hero-grid">
+          <section aria-labelledby="site-title">
+            <h1
+              id="site-title"
+              class="title glitch"
+              data-text="DrBoen's Projects"
+            >
+              DrBoen's Projects
+            </h1>
+            <p class="lead">Explore a selection of Dr. Boens projects!</p>
+          </section>
 
-    <h2>Projects</h2>
-    <ul>
-      <li>
-        <a href="calculate_value_of_annuity.html">Calculate Value of Annuity</a>
-      </li>
-      <li>
-        <a href="https://drboen.github.io/courseforge/index.html"
-          >CourseForge</a
-        >
-      </li>
-      <li><a href="glat.html">GLAT</a></li>
-      <li><a href="momentsOfTruth.html">Moments of Truth</a></li>
-      <li>
-        <a href="service-excellence-battery.html">Service Excellence Battery</a>
-      </li>
-      <li><a href="tic-tac-toe.html">Tic-Tac-Toe</a></li>
-      <li>
-        <a href="service-excellence-ai-chat/index.html"
-          >Service Excellence AI Chat</a
-        >
-      </li>
-      <li>
-        <a href="interactive-survey.html">Interactive Survey</a>
-      </li>
-      <li>
-        <a href="jeopardy.html">Phlebotomy Jeopardy</a>
-      </li>
-      <li>
-        <a href="safmeds-cards.html">SAFMEDS Cards</a>
-      </li>
-    </ul>
+          <aside class="status-panel" aria-label="System status">
+            <p class="status-label">System diagnostics</p>
+            <ul class="status-list">
+              <li class="status-item">
+                <span>Signal</span>
+                <span class="status-value signal" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span>
+                </span>
+              </li>
+              <li class="status-item">
+                <span>Mode</span>
+                <span id="mode-text" class="status-value" aria-live="polite"
+                  >BOOTING...</span
+                >
+              </li>
+              <li class="status-item">
+                <span>Local time</span>
+                <time id="clock" class="status-value" aria-live="polite"
+                  >--:--:--</time
+                >
+              </li>
+              <li class="status-item">
+                <span>Projects indexed</span>
+                <span class="status-value">11</span>
+              </li>
+            </ul>
+          </aside>
+        </div>
+      </header>
+
+      <section
+        id="projects"
+        class="panel projects"
+        aria-labelledby="projects-title"
+      >
+        <div class="section-heading">
+          <div>
+            <h2 id="projects-title">Projects</h2>
+          </div>
+        </div>
+
+        <div class="project-grid">
+          <a class="project-card" href="calculate_value_of_annuity.html">
+            <span class="card-number">01</span>
+            <div class="project-copy">
+              <h3>Calculate Value of Annuity</h3>
+            </div>
+            <span class="project-arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <a
+            class="project-card"
+            href="https://drboen.github.io/courseforge/index.html"
+          >
+            <span class="card-number">02</span>
+            <div class="project-copy">
+              <h3>CourseForge</h3>
+            </div>
+            <span class="project-arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <a class="project-card" href="glat.html">
+            <span class="card-number">03</span>
+            <div class="project-copy">
+              <h3>GLAT</h3>
+            </div>
+            <span class="project-arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <a class="project-card" href="momentsOfTruth.html">
+            <span class="card-number">04</span>
+            <div class="project-copy">
+              <h3>Moments of Truth</h3>
+            </div>
+            <span class="project-arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <a class="project-card" href="service-excellence-battery.html">
+            <span class="card-number">05</span>
+            <div class="project-copy">
+              <h3>Service Excellence Battery</h3>
+            </div>
+            <span class="project-arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <a class="project-card" href="tic-tac-toe.html">
+            <span class="card-number">06</span>
+            <div class="project-copy">
+              <h3>Tic-Tac-Toe</h3>
+            </div>
+            <span class="project-arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <a class="project-card" href="service-excellence-ai-chat/index.html">
+            <span class="card-number">07</span>
+            <div class="project-copy">
+              <h3>Service Excellence AI Chat</h3>
+            </div>
+            <span class="project-arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <a class="project-card" href="interactive-survey.html">
+            <span class="card-number">08</span>
+            <div class="project-copy">
+              <h3>Interactive Survey</h3>
+            </div>
+            <span class="project-arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <a class="project-card" href="jeopardy.html">
+            <span class="card-number">09</span>
+            <div class="project-copy">
+              <h3>Phlebotomy Jeopardy</h3>
+            </div>
+            <span class="project-arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <a class="project-card" href="safmeds-cards.html">
+            <span class="card-number">10</span>
+            <div class="project-copy">
+              <h3>SAFMEDS Cards</h3>
+            </div>
+            <span class="project-arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <a
+            class="project-card"
+            href="service-excellence-intro-ken-burns/index.html"
+          >
+            <span class="card-number">11</span>
+            <div class="project-copy">
+              <h3>Service Excellence Intro Ken Burns</h3>
+            </div>
+            <span class="project-arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const clock = document.getElementById("clock");
+        const modeText = document.getElementById("mode-text");
+        const cards = Array.from(document.querySelectorAll(".project-card"));
+        const modes = [
+          "PROJECT DIRECTORY",
+          "LEARNING SYSTEMS",
+          "INTERACTIVE DEMOS",
+          "CLASSROOM TOOLS",
+          "GITHUB PAGES ONLINE",
+        ];
+
+        function updateClock() {
+          if (!clock) return;
+          const formatter = new Intl.DateTimeFormat([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          });
+          clock.textContent = formatter.format(new Date());
+        }
+
+        function cycleModes() {
+          if (!modeText) return;
+          let index = 0;
+          modeText.textContent = modes[index];
+          window.setInterval(function () {
+            index = (index + 1) % modes.length;
+            modeText.textContent = modes[index];
+          }, 2200);
+        }
+
+        function spotlightCard(card, event) {
+          const rect = card.getBoundingClientRect();
+          const x = ((event.clientX - rect.left) / rect.width) * 100;
+          const y = ((event.clientY - rect.top) / rect.height) * 100;
+          card.style.setProperty("--pointer-x", x + "%");
+          card.style.setProperty("--pointer-y", y + "%");
+        }
+
+        cards.forEach(function (card) {
+          card.addEventListener("pointermove", function (event) {
+            spotlightCard(card, event);
+          });
+
+          card.addEventListener("pointerleave", function () {
+            card.style.removeProperty("--pointer-x");
+            card.style.removeProperty("--pointer-y");
+          });
+        });
+
+        updateClock();
+        cycleModes();
+        window.setInterval(updateClock, 1000);
+      })();
+    </script>
   </body>
 </html>
